@@ -56,4 +56,9 @@ public class OrderItem {
         this.unitPrice = unitPrice;
     }
 
+    @Override
+    public String toString() {
+        return "OrderItem{" + "orderItemId=" + orderItemId + ", orderId=" + orderId + ", bookId=" + bookId + ", quantity=" + quantity + ", unitPrice=" + unitPrice + '}';
+    }
+
 }

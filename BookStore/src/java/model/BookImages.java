@@ -70,4 +70,9 @@ public class BookImages {
         this.createdAt = createdAt;
     }
 
+    @Override
+    public String toString() {
+        return "BookImages{" + "imageId=" + imageId + ", bookId=" + bookId + ", imageData=" + imageData + ", mimeType=" + mimeType + ", isCover=" + isCover + ", createdAt=" + createdAt + '}';
+    }
+
 }

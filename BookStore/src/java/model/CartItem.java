@@ -58,4 +58,9 @@ public class CartItem {
         this.addedAt = addedAt;
     }
 
+    @Override
+    public String toString() {
+        return "CartItem{" + "cartItemId=" + cartItemId + ", cartId=" + cartId + ", bookId=" + bookId + ", quantity=" + quantity + ", addedAt=" + addedAt + '}';
+    }
+
 }
