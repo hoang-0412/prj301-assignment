@@ -96,4 +96,9 @@ public class Order {
         this.createdAt = createdAt;
     }
 
+    @Override
+    public String toString() {
+        return "Order{" + "orderId=" + orderId + ", userId=" + userId + ", totalAmount=" + totalAmount + ", orderStatus=" + orderStatus + ", shippingAddress=" + shippingAddress + ", recipientPhone=" + recipientPhone + ", paymentMethod=" + paymentMethod + ", paymentStatus=" + paymentStatus + ", createdAt=" + createdAt + '}';
+    }
+
 }

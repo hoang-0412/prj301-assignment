@@ -1,14 +1,16 @@
 package model;
 
 import java.sql.Date;
+import java.util.Base64;
 
 public class BookImages {
 
-    int imageId, bookId;
-    byte[] imageData;
-    String mimeType;
-    int isCover;
-    Date createdAt;
+    private int imageId;
+    private int bookId;
+    private byte[] imageData;
+    private String mimeType;
+    private int isCover;
+    private Date createdAt;
 
     public BookImages() {
     }
@@ -20,6 +22,13 @@ public class BookImages {
         this.mimeType = mimeType;
         this.isCover = isCover;
         this.createdAt = createdAt;
+    }
+
+    public BookImages(int bookId, byte[] imageData, String mimeType, int isCover) {
+        this.bookId = bookId;
+        this.imageData = imageData;
+        this.mimeType = mimeType;
+        this.isCover = isCover;
     }
 
     public int getImageId() {
@@ -70,4 +79,36 @@ public class BookImages {
         this.createdAt = createdAt;
     }
 
+    /**
+     * Chuyển mảng byte ảnh sang chuỗi Base64 để hiển thị trực tiếp trên HTML/JSP
+     */
+    public String getBase64Image() {
+        if (imageData != null && imageData.length > 0) {
+            return Base64.getEncoder().encodeToString(imageData);
+        }
+        return "";
+    }
+
+    /**
+     * Trả về URI Data hoàn chỉnh cho thẻ <img>: data:<mimeType>;base64,<base64Data>
+     */
+    public String getBase64Src() {
+        if (imageData != null && imageData.length > 0) {
+            String type = (mimeType != null && !mimeType.trim().isEmpty()) ? mimeType : "image/jpeg";
+            return "data:" + type + ";base64," + getBase64Image();
+        }
+        return "";
+    }
+
+    @Override
+    public String toString() {
+        return "BookImages{" 
+                + "imageId=" + imageId 
+                + ", bookId=" + bookId 
+                + ", imageDataSize=" + (imageData != null ? (imageData.length + " bytes") : "null") 
+                + ", mimeType=" + mimeType 
+                + ", isCover=" + isCover 
+                + ", createdAt=" + createdAt 
+                + '}';
+    }
 }
