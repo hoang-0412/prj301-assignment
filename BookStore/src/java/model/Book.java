@@ -118,4 +118,9 @@ public class Book {
         this.createdAt = createdAt;
     }
 
+    @Override
+    public String toString() {
+        return "Book{" + "bookId=" + bookId + ", categoryId=" + categoryId + ", title=" + title + ", author=" + author + ", publisher=" + publisher + ", publicationYear=" + publicationYear + ", isbn=" + isbn + ", price=" + price + ", stockQuantity=" + stockQuantity + ", description=" + description + ", createdAt=" + createdAt + '}';
+    }
+
 }
