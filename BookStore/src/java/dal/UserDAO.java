@@ -114,12 +114,10 @@ public class UserDAO extends DBContext {
     }
 
     public static void main(String[] args) {
-        BookDAO dao = new BookDAO();
-        Vector<Book> vector = dao.getAllBook();
-        for (Book b : vector) {
-            System.out.println(b);
+        UserDAO dao = new UserDAO();
+        Vector<User> vector = dao.getAllUser();
+        for (User u : vector) {
+            System.out.println(u);
         }
     }
-}
-
 }
