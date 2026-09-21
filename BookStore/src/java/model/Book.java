@@ -30,6 +30,19 @@ public class Book {
         this.createdAt = createdAt;
     }
 
+    public Book(int categoryId, String title, String author, String publisher, int publicationYear, String isbn, double price, int stockQuantity, String description, Date createdAt) {
+        this.categoryId = categoryId;
+        this.title = title;
+        this.author = author;
+        this.publisher = publisher;
+        this.publicationYear = publicationYear;
+        this.isbn = isbn;
+        this.price = price;
+        this.stockQuantity = stockQuantity;
+        this.description = description;
+        this.createdAt = createdAt;
+    }
+
     public int getBookId() {
         return bookId;
     }
