@@ -35,7 +35,34 @@ public class BookDAO extends DBContext {
         }
         return vector;
     }
-    
+
+    public Book searchBook(int bookId) {
+        String sql = "select * from Book\n"
+                + "where bookId = ?";
+        try {
+            PreparedStatement ptm = connection.prepareStatement(sql);
+            ptm.setInt(1, bookId);
+            ResultSet rs = ptm.executeQuery();
+            if (rs.next()) {
+                Book b = new Book(rs.getInt(1),
+                        rs.getInt(2),
+                        rs.getString(3),
+                        rs.getString(4),
+                        rs.getString(5),
+                        rs.getInt(6),
+                        rs.getString(7),
+                        rs.getDouble(8),
+                        rs.getInt(9),
+                        rs.getString(10),
+                        rs.getDate(11));
+                return b;
+            }
+        } catch (SQLException ex) {
+            ex.getStackTrace();
+        }
+        return null;
+    }
+
     public static void main(String[] args) {
         BookDAO dao = new BookDAO();
         Vector<Book> vector = dao.getAllBook();
