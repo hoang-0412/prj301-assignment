@@ -18,6 +18,13 @@ public class CartItem {
         this.addedAt = addedAt;
     }
 
+    public CartItem(int cartId, int bookId, int quantity, Date addedAt) {
+        this.cartId = cartId;
+        this.bookId = bookId;
+        this.quantity = quantity;
+        this.addedAt = addedAt;
+    }
+
     public int getCartItemId() {
         return cartItemId;
     }

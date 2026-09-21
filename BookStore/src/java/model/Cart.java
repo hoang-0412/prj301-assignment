@@ -1,4 +1,4 @@
-package model;
+    package model;
 
 import java.sql.Date;
 
@@ -16,6 +16,12 @@ public class Cart {
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
     }
+
+    public Cart(int userId, Date createdAt, Date updatedAt) {
+        this.userId = userId;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
+    } 
 
     public int getCartId() {
         return cartId;
