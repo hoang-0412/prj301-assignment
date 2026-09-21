@@ -109,6 +109,7 @@ public class OrderDAO extends DBContext {
             ptm.setString(5, o.getPaymentMethod());
             ptm.setString(6, o.getPaymentStatus());
             ptm.setDate(7, o.getCreatedAt());
+            ptm.setInt(8, o.getOrderId());
             n = ptm.executeUpdate();
         } catch (SQLException ex) {
             ex.getStackTrace();
