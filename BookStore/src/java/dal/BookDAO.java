@@ -97,6 +97,41 @@ public class BookDAO extends DBContext {
         return n;
     }
 
+    public int updateBook(Book b) {
+        String sql = "UPDATE [dbo].[Book]\n"
+                + "   SET [categoryId] = ?\n"
+                + "      ,[title] = ?\n"
+                + "      ,[author] = ?\n"
+                + "      ,[publisher] = ?\n"
+                + "      ,[publicationYear] = ?\n"
+                + "      ,[isbn] = ?\n"
+                + "      ,[price] = ?\n"
+                + "      ,[stockQuantity] = ?\n"
+                + "      ,[description] = ?\n"
+                + "      ,[createdAt] = ?\n"
+                + " WHERE bookId = ?";
+        int n = 0;
+        try {
+            PreparedStatement ptm = connection.prepareStatement(sql);
+            ptm.setInt(1, b.getCategoryId());
+            ptm.setString(2, b.getTitle());
+            ptm.setString(3, b.getAuthor());
+            ptm.setString(4, b.getPublisher());
+            ptm.setInt(5, b.getPublicationYear());
+            ptm.setString(6, b.getIsbn());
+            ptm.setDouble(7, b.getPrice());
+            ptm.setInt(8, b.getStockQuantity());
+            ptm.setString(9, b.getDescription());
+            ptm.setDate(10, b.getCreatedAt());
+            ptm.setInt(11, b.getBookId());
+            n = ptm.executeUpdate();
+
+        } catch (SQLException ex) {
+            ex.getStackTrace();
+        }
+        return n;
+    }
+
     public static void main(String[] args) {
         BookDAO dao = new BookDAO();
         Vector<Book> vector = dao.getAllBook();
