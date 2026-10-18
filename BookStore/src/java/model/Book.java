@@ -131,9 +131,39 @@ public class Book {
         this.createdAt = createdAt;
     }
 
+    private String categoryName;
+    private BookImages coverImage;
+
+    public String getCategoryName() {
+        return categoryName;
+    }
+
+    public void setCategoryName(String categoryName) {
+        this.categoryName = categoryName;
+    }
+
+    public BookImages getCoverImage() {
+        return coverImage;
+    }
+
+    public void setCoverImage(BookImages coverImage) {
+        this.coverImage = coverImage;
+    }
+
+    public String getFormattedPrice() {
+        return String.format("%,.0f đ", price).replace(',', '.');
+    }
+
+    public boolean hasCoverImage() {
+        return coverImage != null && coverImage.getImageData() != null && coverImage.getImageData().length > 30;
+    }
+
+    public String getCoverBase64() {
+        return (coverImage != null) ? coverImage.getBase64Src() : "";
+    }
+
     @Override
     public String toString() {
         return "Book{" + "bookId=" + bookId + ", categoryId=" + categoryId + ", title=" + title + ", author=" + author + ", publisher=" + publisher + ", publicationYear=" + publicationYear + ", isbn=" + isbn + ", price=" + price + ", stockQuantity=" + stockQuantity + ", description=" + description + ", createdAt=" + createdAt + '}';
     }
-
 }

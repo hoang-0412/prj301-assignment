@@ -43,9 +43,18 @@ public class Category {
         this.description = description;
     }
 
-    @Override
-    public String toString() {
-        return "Category{" + "categoryId=" + categoryId + ", categoryName=" + categoryName + ", description=" + description + '}';
+    private int bookCount;
+
+    public int getBookCount() {
+        return bookCount;
     }
 
+    public void setBookCount(int bookCount) {
+        this.bookCount = bookCount;
+    }
+
+    @Override
+    public String toString() {
+        return "Category{" + "categoryId=" + categoryId + ", categoryName=" + categoryName + ", description=" + description + ", bookCount=" + bookCount + '}';
+    }
 }
