@@ -84,6 +84,48 @@ public class UserDAO extends DBContext {
         return null;
     }
 
+    public User getUserByEmailOrPhone(String identifier) {
+        if (identifier == null || identifier.trim().isEmpty()) {
+            return null;
+        }
+        String idClean = identifier.trim();
+        String sql = "SELECT userId, roleId, fullName, email, passwordHash, phoneNumber, address, createdAt FROM [User] WHERE email = ? OR phoneNumber = ?";
+        try (PreparedStatement ptm = connection.prepareStatement(sql)) {
+            ptm.setString(1, idClean);
+            ptm.setString(2, idClean);
+            try (ResultSet rs = ptm.executeQuery()) {
+                if (rs.next()) {
+                    return new User(
+                            rs.getInt(1),
+                            rs.getInt(2),
+                            rs.getString(3),
+                            rs.getString(4),
+                            rs.getString(5),
+                            rs.getString(6),
+                            rs.getString(7),
+                            rs.getDate(8)
+                    );
+                }
+            }
+        } catch (SQLException ex) {
+            LOGGER.log(Level.SEVERE, "Lỗi khi tìm người dùng theo email hoặc SĐT: " + idClean, ex);
+        }
+        return null;
+    }
+
+    public boolean checkPassword(User user, String rawPassword) {
+        if (user == null || rawPassword == null) {
+            return false;
+        }
+        String hash = user.getPasswordHash();
+        if (hash == null) {
+            return false;
+        }
+        return hash.equals(rawPassword)
+                || hash.equals("hashed_pwd_" + rawPassword)
+                || ("hashed_pwd_" + hash).equals(rawPassword);
+    }
+
     public int insertUser(User u) {
         String sql = "INSERT INTO [dbo].[User] ([roleId], [fullName], [email], [passwordHash], [phoneNumber], [address], [createdAt]) VALUES (?, ?, ?, ?, ?, ?, ?)";
         int n = 0;

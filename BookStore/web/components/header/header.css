@@ -369,8 +369,453 @@
     color: var(--hdr-primary);
 }
 
+
+
 /* ==========================================================
-   6. RESPONSIVE HEADER
+   6. USER PROFILE DROPDOWN (LOGGED IN STATE)
+   ========================================================== */
+.header-user-wrap {
+    position: relative;
+}
+
+.header-user-dropdown {
+    position: absolute;
+    top: calc(100% + 10px);
+    right: 0;
+    width: 230px;
+    background: #ffffff;
+    border-radius: 14px;
+    box-shadow: 0 16px 36px -4px rgba(15, 23, 42, 0.15), 0 0 0 1px rgba(226, 232, 240, 0.8);
+    padding: 10px;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(8px);
+    transition: var(--hdr-transition);
+    z-index: 1050;
+}
+
+.header-user-wrap:hover .header-user-dropdown,
+.header-user-wrap.active .header-user-dropdown {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.user-dropdown-info {
+    padding: 8px 10px 10px;
+}
+
+.user-dropdown-name {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--hdr-dark-900);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.user-dropdown-email {
+    font-size: 12px;
+    color: var(--hdr-gray-400);
+    margin-top: 2px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.user-dropdown-divider {
+    height: 1px;
+    background: var(--hdr-gray-200);
+    margin: 4px 0 8px;
+}
+
+.user-dropdown-link {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 10px;
+    border-radius: 8px;
+    font-size: 13.5px;
+    font-weight: 500;
+    color: var(--hdr-dark-700);
+    text-decoration: none;
+    transition: var(--hdr-transition);
+}
+
+.user-dropdown-link:hover {
+    background: var(--hdr-gray-100);
+    color: var(--hdr-primary);
+}
+
+.user-dropdown-link.logout {
+    color: var(--hdr-danger);
+}
+
+.user-dropdown-link.logout:hover {
+    background: #fef2f2;
+    color: #dc2626;
+}
+
+/* ==========================================================
+   7. AUTH / LOGIN MODAL DIALOG (TULALOVE.VN DESIGN)
+   ========================================================== */
+.auth-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(15, 23, 42, 0.48);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    z-index: 2200;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.25s ease, visibility 0.25s ease;
+}
+
+.auth-modal-overlay.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+.auth-modal-card {
+    background: #ffffff;
+    width: 100%;
+    max-width: 440px;
+    border-radius: 22px;
+    padding: 34px 32px 36px;
+    box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.25), 0 0 1px rgba(0, 0, 0, 0.12);
+    border: 1px solid rgba(226, 232, 240, 0.9);
+    position: relative;
+    transform: scale(0.95) translateY(14px);
+    transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+    box-sizing: border-box;
+    font-family: var(--hdr-font-body);
+}
+
+.auth-modal-overlay.active .auth-modal-card {
+    transform: scale(1) translateY(0);
+}
+
+/* Close round button (top right) */
+.auth-modal-close {
+    position: absolute;
+    top: 18px;
+    right: 18px;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: 1px solid #e2e8f0;
+    background: #ffffff;
+    color: #64748b;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 700;
+    transition: var(--hdr-transition);
+    outline: none;
+}
+
+.auth-modal-close:hover {
+    background: #f1f5f9;
+    color: #0f172a;
+    border-color: #cbd5e1;
+}
+
+/* Center Avatar / Logo in circular frame */
+.auth-modal-avatar {
+    width: 58px;
+    height: 58px;
+    border-radius: 50%;
+    background: #fff1f2;
+    border: 2px solid #ffe4e6;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 16px;
+    box-shadow: 0 4px 12px rgba(244, 63, 94, 0.12);
+}
+
+/* Modal Title & Subtitle */
+.auth-title {
+    font-family: var(--hdr-font-heading);
+    font-size: 22px;
+    font-weight: 700;
+    color: #0f172a;
+    text-align: center;
+    margin: 0 0 6px;
+    letter-spacing: -0.3px;
+}
+
+.auth-subtitle {
+    font-size: 13px;
+    color: #64748b;
+    text-align: center;
+    margin: 0 0 22px;
+    line-height: 1.45;
+}
+
+/* Thẻ thông tin tài khoản ở bước 2 */
+.auth-account-badge {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: var(--hdr-radius-full);
+    padding: 6px 14px;
+    margin: 8px auto 20px;
+    width: fit-content;
+    max-width: 100%;
+}
+
+.auth-badge-id {
+    font-size: 13px;
+    font-weight: 600;
+    color: #1e293b;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 220px;
+}
+
+.auth-badge-change {
+    background: none;
+    border: none;
+    color: #f43f5e;
+    font-size: 12.5px;
+    font-weight: 600;
+    cursor: pointer;
+    padding: 0;
+    text-decoration: underline;
+    font-family: inherit;
+}
+
+.auth-badge-change:hover {
+    color: #e11d48;
+}
+
+/* Form Controls */
+.auth-form-group {
+    margin-bottom: 12px;
+}
+
+.auth-label {
+    display: block;
+    font-size: 13.5px;
+    font-weight: 600;
+    color: #1e293b;
+    margin-bottom: 7px;
+    text-align: left;
+}
+
+.auth-input {
+    width: 100%;
+    height: 48px;
+    border: 1.5px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 0 16px;
+    font-size: 14.5px;
+    color: #0f172a;
+    background: #ffffff;
+    outline: none;
+    transition: var(--hdr-transition);
+    box-sizing: border-box;
+    font-family: inherit;
+}
+
+.auth-input:focus {
+    border-color: #f43f5e;
+    box-shadow: 0 0 0 3.5px rgba(244, 63, 94, 0.15);
+}
+
+.auth-input::placeholder {
+    color: #94a3b8;
+}
+
+/* Password Input Wrapper with Eye Toggle */
+.auth-input-wrapper {
+    position: relative;
+    width: 100%;
+}
+
+.auth-input-wrapper .auth-input {
+    padding-right: 46px;
+}
+
+.auth-eye-btn {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: transparent;
+    border: none;
+    color: #64748b;
+    cursor: pointer;
+    padding: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 6px;
+    transition: color 0.15s;
+    outline: none;
+}
+
+.auth-eye-btn:hover {
+    color: #0f172a;
+}
+
+/* Forgot password link */
+.auth-link-row {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 8px;
+}
+
+.auth-forgot-link {
+    color: #f43f5e;
+    font-size: 13px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: color 0.15s;
+}
+
+.auth-forgot-link:hover {
+    color: #e11d48;
+    text-decoration: underline;
+}
+
+/* Primary Pill Action Button (Coral/Pink like TulaLove) */
+.auth-btn-primary {
+    width: 100%;
+    height: 48px;
+    border-radius: var(--hdr-radius-full);
+    background: #f43f5e;
+    color: #ffffff;
+    font-size: 15px;
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: all 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 4px 14px rgba(244, 63, 94, 0.32);
+    font-family: inherit;
+    margin-top: 18px;
+    outline: none;
+}
+
+.auth-btn-primary:hover {
+    background: #e11d48;
+    box-shadow: 0 6px 20px rgba(244, 63, 94, 0.42);
+    transform: translateY(-1.5px);
+}
+
+.auth-btn-primary:active {
+    transform: translateY(0);
+}
+
+.auth-btn-primary:disabled {
+    opacity: 0.65;
+    cursor: not-allowed;
+    transform: none !important;
+}
+
+/* Feedback Messages */
+.auth-feedback {
+    padding: 10px 14px;
+    border-radius: 10px;
+    font-size: 13px;
+    line-height: 1.4;
+    margin-bottom: 16px;
+    text-align: left;
+    animation: authFadeIn 0.2s ease;
+}
+
+.auth-feedback.error {
+    background: #fef2f2;
+    color: #dc2626;
+    border: 1px solid #fecaca;
+}
+
+.auth-feedback.success {
+    background: #f0fdf4;
+    color: #16a34a;
+    border: 1px solid #bbf7d0;
+}
+
+.auth-feedback.info {
+    background: #eff6ff;
+    color: #2563eb;
+    border: 1px solid #bfdbfe;
+}
+
+@keyframes authFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-4px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Back Link for Register / Steps */
+.auth-link-back {
+    background: none;
+    border: none;
+    color: #64748b;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    padding: 4px;
+    transition: color 0.15s;
+    font-family: inherit;
+}
+
+.auth-link-back:hover {
+    color: #0f172a;
+}
+
+/* Contact box for forgot password */
+.auth-contact-box {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 14px 16px;
+    margin: 16px 0;
+}
+
+.contact-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 13px;
+    padding: 6px 0;
+}
+
+.contact-lbl {
+    color: #64748b;
+}
+
+.contact-val {
+    color: #0f172a;
+    font-weight: 600;
+}
+
+/* ==========================================================
+   8. RESPONSIVE HEADER
    ========================================================== */
 @media (max-width: 992px) {
     .nav-task-links {
@@ -398,5 +843,9 @@
     }
     .search-popup-card {
         padding: 20px;
+    }
+    .auth-modal-card {
+        padding: 28px 20px 30px;
+        border-radius: 18px;
     }
 }

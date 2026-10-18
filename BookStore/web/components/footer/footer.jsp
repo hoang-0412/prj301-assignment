@@ -3,17 +3,16 @@
 <%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
-<!-- FOOTER COMPONENT -->
 <footer class="main-footer" id="about">
     <div class="container">
         <div class="footer-grid">
             <!-- Brand info -->
             <div class="footer-col">
                 <div class="footer-brand">
-                    Book<span>Store</span>
+                    Hoàng<span>Trịnh</span>
                 </div>
                 <p class="footer-desc">
-                    Hệ thống phát hành sách trực tuyến chính hãng, mang sứ mệnh lan tỏa văn hóa đọc và kết nối tri thức đến hàng triệu độc giả Việt Nam.
+                    TIỆM SÁCH TNHH MỘT MÌNH TÔI
                 </p>
                 <div class="payment-badges">
                     <span class="payment-pill">VISA</span>
@@ -63,13 +62,13 @@
             <div class="footer-col" id="contact">
                 <h5>Thông Tin Liên Hệ</h5>
                 <div class="footer-contact-item">
-                    <span>Địa chỉ: Tầng 5, Tòa nhà Tri Thức, Khu Công Nghệ Cao, Hà Nội</span>
+                    <span>Địa chỉ: FPT UNIVERSITY, HA NOI, VIET NAM</span>
                 </div>
                 <div class="footer-contact-item">
-                    <span>Hotline: 1900 6868 (8:00 - 21:00)</span>
+                    <span>Hotline: 0965 551 664</span>
                 </div>
                 <div class="footer-contact-item">
-                    <span>Email: support@bookstore.vn</span>
+                    <span>Email: hoangth04122005@gmail.com</span>
                 </div>
             </div>
         </div>
