@@ -16,6 +16,12 @@ public class BookDAO extends DBContext {
     private static final Logger LOGGER = Logger.getLogger(BookDAO.class.getName());
 
     private Book mapResultSetWithDetails(ResultSet rs) throws SQLException {
+        String bookStatus = null;
+        try {
+            bookStatus = rs.getString("bookStatus");
+        } catch (SQLException ignored) {
+        }
+
         Book b = new Book(
                 rs.getInt("bookId"),
                 rs.getInt("categoryId"),
@@ -27,7 +33,8 @@ public class BookDAO extends DBContext {
                 rs.getDouble("price"),
                 rs.getInt("stockQuantity"),
                 rs.getString("description"),
-                rs.getDate("createdAt")
+                rs.getDate("createdAt"),
+                bookStatus
         );
         try {
             b.setCategoryName(rs.getString("categoryName"));
@@ -52,7 +59,7 @@ public class BookDAO extends DBContext {
 
     public Vector<Book> getAllBook() {
         Vector<Book> vector = new Vector<>();
-        String sql = "select * from Book";
+        String sql = "SELECT bookId, categoryId, title, author, publisher, publicationYear, isbn, price, stockQuantity, description, createdAt, bookStatus FROM Book";
         try {
             PreparedStatement ptm = connection.prepareStatement(sql);
             ResultSet rs = ptm.executeQuery();
@@ -67,7 +74,8 @@ public class BookDAO extends DBContext {
                         rs.getDouble(8),
                         rs.getInt(9),
                         rs.getString(10),
-                        rs.getDate(11));
+                        rs.getDate(11),
+                        rs.getString(12));
                 vector.add(b);
             }
         } catch (SQLException ex) {
@@ -80,7 +88,7 @@ public class BookDAO extends DBContext {
         Vector<Book> vector = new Vector<>();
         StringBuilder sql = new StringBuilder();
         sql.append("SELECT b.bookId, b.categoryId, b.title, b.author, b.publisher, ")
-           .append("b.publicationYear, b.isbn, b.price, b.stockQuantity, b.description, b.createdAt, ")
+           .append("b.publicationYear, b.isbn, b.price, b.stockQuantity, b.description, b.createdAt, b.bookStatus, ")
            .append("c.categoryName, ")
            .append("img.imageId, img.imageData, img.mimeType, img.isCover, img.createdAt AS imgCreatedAt ")
            .append("FROM Book b ")
@@ -181,7 +189,7 @@ public class BookDAO extends DBContext {
     public Vector<Book> getFeaturedBooks(int limit) {
         Vector<Book> vector = new Vector<>();
         String sql = "SELECT TOP (" + limit + ") b.bookId, b.categoryId, b.title, b.author, b.publisher, "
-                + "b.publicationYear, b.isbn, b.price, b.stockQuantity, b.description, b.createdAt, "
+                + "b.publicationYear, b.isbn, b.price, b.stockQuantity, b.description, b.createdAt, b.bookStatus, "
                 + "c.categoryName, "
                 + "img.imageId, img.imageData, img.mimeType, img.isCover, img.createdAt AS imgCreatedAt "
                 + "FROM Book b "
@@ -207,7 +215,7 @@ public class BookDAO extends DBContext {
     public Vector<Book> getNewestBooks(int limit) {
         Vector<Book> vector = new Vector<>();
         String sql = "SELECT TOP (" + limit + ") b.bookId, b.categoryId, b.title, b.author, b.publisher, "
-                + "b.publicationYear, b.isbn, b.price, b.stockQuantity, b.description, b.createdAt, "
+                + "b.publicationYear, b.isbn, b.price, b.stockQuantity, b.description, b.createdAt, b.bookStatus, "
                 + "c.categoryName, "
                 + "img.imageId, img.imageData, img.mimeType, img.isCover, img.createdAt AS imgCreatedAt "
                 + "FROM Book b "
@@ -232,7 +240,7 @@ public class BookDAO extends DBContext {
 
     public Book searchBook(int bookId) {
         String sql = "SELECT b.bookId, b.categoryId, b.title, b.author, b.publisher, "
-                + "b.publicationYear, b.isbn, b.price, b.stockQuantity, b.description, b.createdAt, "
+                + "b.publicationYear, b.isbn, b.price, b.stockQuantity, b.description, b.createdAt, b.bookStatus, "
                 + "c.categoryName, "
                 + "img.imageId, img.imageData, img.mimeType, img.isCover, img.createdAt AS imgCreatedAt "
                 + "FROM Book b "
@@ -268,12 +276,13 @@ public class BookDAO extends DBContext {
                 + "           ,[price]\n"
                 + "           ,[stockQuantity]\n"
                 + "           ,[description]\n"
-                + "           ,[createdAt])\n"
+                + "           ,[createdAt]\n"
+                + "           ,[bookStatus])\n"
                 + "     VALUES\n"
-                + "           (?,?,?,?,?,?,?,?,?,?)";
+                + "           (?,?,?,?,?,?,?,?,?,?,?)";
         int n = 0;
         try {
-            PreparedStatement ptm = connection.prepareStatement(sql);
+            PreparedStatement ptm = connection.prepareStatement(sql, java.sql.Statement.RETURN_GENERATED_KEYS);
             ptm.setInt(1, b.getCategoryId());
             ptm.setString(2, b.getTitle());
             ptm.setString(3, b.getAuthor());
@@ -284,6 +293,7 @@ public class BookDAO extends DBContext {
             ptm.setInt(8, b.getStockQuantity());
             ptm.setString(9, b.getDescription());
             ptm.setDate(10, b.getCreatedAt() != null ? b.getCreatedAt() : new java.sql.Date(System.currentTimeMillis()));
+            ptm.setString(11, b.getBookStatus() != null ? b.getBookStatus() : "Bán");
             n = ptm.executeUpdate();
             if (n > 0) {
                 try (ResultSet generatedKeys = ptm.getGeneratedKeys()) {
@@ -310,6 +320,7 @@ public class BookDAO extends DBContext {
                 + "      ,[stockQuantity] = ?\n"
                 + "      ,[description] = ?\n"
                 + "      ,[createdAt] = ?\n"
+                + "      ,[bookStatus] = ?\n"
                 + " WHERE bookId = ?";
         int n = 0;
         try (PreparedStatement ptm = connection.prepareStatement(sql)) {
@@ -323,7 +334,8 @@ public class BookDAO extends DBContext {
             ptm.setInt(8, b.getStockQuantity());
             ptm.setString(9, b.getDescription());
             ptm.setDate(10, b.getCreatedAt() != null ? b.getCreatedAt() : new java.sql.Date(System.currentTimeMillis()));
-            ptm.setInt(11, b.getBookId());
+            ptm.setString(11, b.getBookStatus() != null ? b.getBookStatus() : "Bán");
+            ptm.setInt(12, b.getBookId());
             n = ptm.executeUpdate();
         } catch (SQLException ex) {
             LOGGER.log(Level.SEVERE, "Lỗi khi cập nhật thông tin sách", ex);

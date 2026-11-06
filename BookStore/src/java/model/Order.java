@@ -24,6 +24,17 @@ public class Order {
         this.createdAt = createdAt;
     }
 
+    public Order(int userId, double totalAmount, String orderStatus, String shippingAddress, String recipientPhone, String paymentMethod, String paymentStatus, Date createdAt) {
+        this.userId = userId;
+        this.totalAmount = totalAmount;
+        this.orderStatus = orderStatus;
+        this.shippingAddress = shippingAddress;
+        this.recipientPhone = recipientPhone;
+        this.paymentMethod = paymentMethod;
+        this.paymentStatus = paymentStatus;
+        this.createdAt = createdAt;
+    }
+
     public int getOrderId() {
         return orderId;
     }
