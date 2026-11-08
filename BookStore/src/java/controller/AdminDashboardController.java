@@ -538,6 +538,11 @@ public class AdminDashboardController extends HttpServlet {
             return;
         }
 
+        if (existing.getRoleId() == 1) {
+            session.setAttribute("adminErrorMsg", "Quản trị viên không được phép chỉnh sửa tài khoản của Khách hàng!");
+            return;
+        }
+
         String fullName = trimParam(request.getParameter("fullName"));
         String email = trimParam(request.getParameter("email"));
         String password = trimParam(request.getParameter("password"));
