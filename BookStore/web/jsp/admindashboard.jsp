@@ -36,6 +36,10 @@
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
                             <span>Xem Trang Chủ</span>
                         </a>
+                        <a href="${pageContext.request.contextPath}/admin-analytics" class="btn-hero-action btn-hero-outline">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+                            <span>Thống Kê & Báo Cáo</span>
+                        </a>
                         <button type="button" class="btn-hero-action btn-hero-primary" id="btnHeroAddBook">
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
                             <span>Thêm Sách Mới</span>
@@ -417,7 +421,13 @@
                                 <c:when test="${not empty orders}">
                                     <c:forEach items="${orders}" var="o">
                                         <tr class="data-row">
-                                            <td><strong>#${o.orderId}</strong></td>
+                                            <td>
+                                                <strong>
+                                                    <a href="${pageContext.request.contextPath}/order-detail?id=${o.orderId}" style="color:#4f46e5; text-decoration:none;">
+                                                        #${o.orderId}
+                                                    </a>
+                                                </strong>
+                                            </td>
                                             <td>
                                                 <strong>${not empty o.customerName ? fn:escapeXml(o.customerName) : 'User #' += o.userId}</strong>
                                                 <div style="font-size:12px; color:#64748b;">ID: #${o.userId}</div>
@@ -456,6 +466,10 @@
                                             <td>${o.createdAt}</td>
                                             <td>
                                                 <div class="action-cell">
+                                                    <a href="${pageContext.request.contextPath}/order-detail?id=${o.orderId}"
+                                                       class="btn-admin btn-icon-sm btn-outline" style="text-decoration:none;">
+                                                        Chi tiết
+                                                    </a>
                                                     <button type="button" class="btn-admin btn-icon-sm btn-edit js-edit-order"
                                                             data-id="${o.orderId}"
                                                             data-orderstatus="${fn:escapeXml(o.orderStatus)}"

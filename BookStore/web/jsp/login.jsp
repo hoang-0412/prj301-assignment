@@ -86,6 +86,9 @@
                             </svg>
                         </button>
                     </form>
+                    <div style="text-align: center; margin-top: 16px; font-size: 13.5px; color: #64748b;">
+                        Chưa có tài khoản? <a href="${pageContext.request.contextPath}/register" style="color: #4f46e5; font-weight: 700; text-decoration: none;">Đăng ký tài khoản mới →</a>
+                    </div>
                 </div>
 
                 <!-- ================= BƯỚC 2: NHẬP MẬT KHẨU ================= -->

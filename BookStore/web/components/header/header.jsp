@@ -14,10 +14,10 @@
         <!-- 2. Các container task (Chính giữa màn hình căn dọc) -->
         <nav class="nav-task-links" aria-label="Menu chính">
             <a href="${pageContext.request.contextPath}/home" class="nav-link active">Trang Chủ</a>
+            <a href="${pageContext.request.contextPath}/catalog" class="nav-link">Tất Cả Danh Mục</a>
+            <a href="${pageContext.request.contextPath}/catalog?status=Cho+thu%C3%AA" class="nav-link">Sách Cho Thuê</a>
             <a href="${pageContext.request.contextPath}/home#featured" class="nav-link">Sách Nổi Bật</a>
-            <a href="${pageContext.request.contextPath}/home#catalog" class="nav-link">Tất Cả Danh Mục</a>
             <a href="${pageContext.request.contextPath}/home#newsletter" class="nav-link">Khuyến Mãi</a>
-            <a href="${pageContext.request.contextPath}/home#about" class="nav-link">Về Chúng Tôi</a>
         </nav>
 
         <!-- 3. Chức năng dạng Icon: Button tìm kiếm -> Giỏ hàng -> Login -->
@@ -71,6 +71,10 @@
                                 <a href="${pageContext.request.contextPath}/admindashboard" class="user-dropdown-link">
                                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
                                     <span>Trang Quản Trị</span>
+                                </a>
+                                <a href="${pageContext.request.contextPath}/admin-analytics" class="user-dropdown-link">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
+                                    <span>Báo Cáo Thống Kê</span>
                                 </a>
                             </c:if>
                             <a href="${pageContext.request.contextPath}/logout" class="user-dropdown-link logout">
@@ -167,6 +171,9 @@
                     </svg>
                 </button>
             </form>
+            <div style="text-align: center; margin-top: 14px; font-size: 13px; color: #64748b;">
+                Hoặc <a href="${pageContext.request.contextPath}/register" style="color: #4f46e5; font-weight: 700; text-decoration: none;">Đăng ký tài khoản đầy đủ →</a>
+            </div>
         </div>
 
         <!-- ================= BƯỚC 2: NHẬP MẬT KHẨU ================= -->

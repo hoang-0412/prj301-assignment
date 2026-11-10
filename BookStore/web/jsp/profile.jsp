@@ -166,7 +166,11 @@
                                         <div class="prf-order-card">
                                             <div class="prf-order-top">
                                                 <div class="prf-order-id-group">
-                                                    <strong>Đơn hàng #${o.orderId}</strong>
+                                                    <strong>
+                                                        <a href="${pageContext.request.contextPath}/order-detail?id=${o.orderId}" style="color:inherit; text-decoration:none;">
+                                                            Đơn hàng #${o.orderId}
+                                                        </a>
+                                                    </strong>
                                                     <span class="prf-order-date">Ngày đặt: ${o.createdAt}</span>
                                                 </div>
                                                 <div class="prf-order-badges">
@@ -213,6 +217,10 @@
                                                 </div>
                                                 <div class="prf-order-total-wrap">
                                                     <span class="prf-total-lbl">Tổng tiền: <strong>${o.formattedTotalAmount}</strong></span>
+                                                    <a href="${pageContext.request.contextPath}/order-detail?id=${o.orderId}"
+                                                       style="padding:7px 14px; border-radius:8px; border:1px solid #cbd5e1; background:#ffffff; color:#1e293b; font-size:12.5px; font-weight:700; text-decoration:none;">
+                                                        Xem Chi Tiết / Hóa Đơn
+                                                    </a>
                                                     <c:if test="${o.orderStatus == 'Pending'}">
                                                         <form action="${pageContext.request.contextPath}/profile" method="POST"
                                                               onsubmit="return confirm('Bạn có chắc chắn muốn hủy đơn hàng #${o.orderId}?');">
