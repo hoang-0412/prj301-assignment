@@ -539,24 +539,17 @@
                                     <td>${u.createdAt}</td>
                                     <td>
                                         <div class="action-cell">
-                                            <c:choose>
-                                                <c:when test="${u.roleId == 2}">
-                                                    <button type="button" class="btn-admin btn-icon-sm btn-edit js-edit-user"
-                                                            data-id="${u.userId}"
-                                                            data-fullname="${fn:escapeXml(u.fullName)}"
-                                                            data-email="${fn:escapeXml(u.email)}"
-                                                            data-phone="${fn:escapeXml(u.phoneNumber)}"
-                                                            data-address="${fn:escapeXml(u.address)}"
-                                                            data-roleid="${u.roleId}">
-                                                        Sửa
-                                                    </button>
-                                                </c:when>
-                                                <c:otherwise>
-                                                    <span style="font-size:12px; color:#64748b; padding:4px 8px; background:#f1f5f9; border-radius:6px;" title="Admin không được phép sửa thông tin khách hàng">
-                                                        Chỉ xem
-                                                    </span>
-                                                </c:otherwise>
-                                            </c:choose>
+                                            <c:if test="${u.roleId == 2}">
+                                                <button type="button" class="btn-admin btn-icon-sm btn-edit js-edit-user"
+                                                        data-id="${u.userId}"
+                                                        data-fullname="${fn:escapeXml(u.fullName)}"
+                                                        data-email="${fn:escapeXml(u.email)}"
+                                                        data-phone="${fn:escapeXml(u.phoneNumber)}"
+                                                        data-address="${fn:escapeXml(u.address)}"
+                                                        data-roleid="${u.roleId}">
+                                                    Sửa
+                                                </button>
+                                            </c:if>
                                             <c:if test="${empty sessionScope.user or sessionScope.user.userId != u.userId}">
                                                 <button type="button" class="btn-admin btn-icon-sm btn-delete js-delete-item"
                                                         data-action="deleteUser"
