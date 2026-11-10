@@ -90,6 +90,12 @@ function initQuickViewModal() {
                 modalAddCartBtn.dataset.title = title;
             }
 
+            const modalViewDetailLink = document.getElementById('modalViewDetailLink');
+            if (modalViewDetailLink) {
+                const ctx = modalOverlay.dataset.contextPath || '';
+                modalViewDetailLink.href = ctx + '/book-detail?id=' + id;
+            }
+
             // Reset quantity to 1
             const qtyInput = document.getElementById('modalQtyInput');
             if (qtyInput) qtyInput.value = '1';
@@ -117,24 +123,53 @@ function initQuickViewModal() {
     });
 }
 
-/* Add to Cart Simulation & Toast */
+/* Add to Cart Real Server Sync & Toast */
 function initAddToCart() {
     const cartBadge = document.getElementById('navCartBadge');
+    const modalOverlay = document.getElementById('quickViewModal');
+    const contextPath = modalOverlay ? (modalOverlay.dataset.contextPath || '') : '';
 
-    function handleAddToCart(bookTitle) {
-        if (cartBadge) {
-            let count = parseInt(cartBadge.textContent.trim()) || 0;
-            count += 1;
-            cartBadge.textContent = count;
-            cartBadge.style.display = 'flex';
-            cartBadge.animate([
-                { transform: 'scale(1)' },
-                { transform: 'scale(1.4)' },
-                { transform: 'scale(1)' }
-            ], { duration: 300 });
+    function handleAddToCart(bookId, bookTitle, quantity) {
+        const qty = quantity && quantity > 0 ? quantity : 1;
+        if (!bookId) {
+            showToast('Đã thêm vào giỏ hàng!', bookTitle);
+            return;
         }
 
-        showToast('Đã thêm vào giỏ hàng!', bookTitle);
+        const params = new URLSearchParams();
+        params.append('action', 'add');
+        params.append('bookId', bookId);
+        params.append('quantity', String(qty));
+        params.append('ajax', 'true');
+
+        fetch(contextPath + '/cart', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: params.toString()
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (cartBadge && typeof data.cartCount === 'number') {
+                cartBadge.textContent = data.cartCount;
+                cartBadge.style.display = data.cartCount > 0 ? 'flex' : 'none';
+                cartBadge.animate([
+                    { transform: 'scale(1)' },
+                    { transform: 'scale(1.4)' },
+                    { transform: 'scale(1)' }
+                ], { duration: 300 });
+            }
+            if (data.success) {
+                showToast('Đã thêm vào giỏ hàng!', data.message || bookTitle);
+            } else {
+                showToast('Thông báo giỏ hàng', data.message || 'Không thể thêm sản phẩm');
+            }
+        })
+        .catch(() => {
+            showToast('Đã thêm vào giỏ hàng!', bookTitle);
+        });
     }
 
     // Mini buttons on cards
@@ -142,8 +177,9 @@ function initAddToCart() {
         btn.addEventListener('click', (e) => {
             e.preventDefault();
             const card = btn.closest('.book-card');
+            const id = card ? card.dataset.id : '';
             const title = card ? card.dataset.title : 'Cuốn sách';
-            handleAddToCart(title);
+            handleAddToCart(id, title, 1);
         });
     });
 
@@ -151,10 +187,12 @@ function initAddToCart() {
     const modalAddCartBtn = document.getElementById('modalAddToCartBtn');
     if (modalAddCartBtn) {
         modalAddCartBtn.addEventListener('click', () => {
+            const id = modalAddCartBtn.dataset.id || '';
             const title = modalAddCartBtn.dataset.title || 'Cuốn sách';
-            handleAddToCart(title);
-            
-            const modalOverlay = document.getElementById('quickViewModal');
+            const qtyInput = document.getElementById('modalQtyInput');
+            const qty = qtyInput ? (parseInt(qtyInput.value, 10) || 1) : 1;
+            handleAddToCart(id, title, qty);
+
             if (modalOverlay) {
                 modalOverlay.classList.remove('active');
                 document.body.style.overflow = '';

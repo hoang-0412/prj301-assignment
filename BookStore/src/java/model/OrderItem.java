@@ -73,6 +73,14 @@ public class OrderItem {
         this.bookTitle = bookTitle;
     }
 
+    public String getFormattedUnitPrice() {
+        return String.format("%,.0f đ", unitPrice).replace(',', '.');
+    }
+
+    public String getFormattedSubtotal() {
+        return String.format("%,.0f đ", unitPrice * quantity).replace(',', '.');
+    }
+
     @Override
     public String toString() {
         return "OrderItem{" + "orderItemId=" + orderItemId + ", orderId=" + orderId + ", bookId=" + bookId + ", quantity=" + quantity + ", unitPrice=" + unitPrice + '}';
