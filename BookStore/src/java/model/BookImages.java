@@ -39,14 +39,6 @@ public class BookImages {
         this.isCover = isCover;
     }
 
-    public BookImages(int bookId, byte[] imageData, String mimeType, int isCover, Date createdAt) {
-        this.bookId = bookId;
-        this.imageData = imageData;
-        this.mimeType = mimeType;
-        this.isCover = isCover;
-        this.createdAt = createdAt;
-    }
-
     public int getImageId() {
         return imageId;
     }
