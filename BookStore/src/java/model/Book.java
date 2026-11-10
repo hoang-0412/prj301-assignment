@@ -12,11 +12,16 @@ public class Book {
     int stockQuantity;
     String description;
     Date createdAt;
+    String bookStatus;
 
     public Book() {
     }
 
     public Book(int bookId, int categoryId, String title, String author, String publisher, int publicationYear, String isbn, double price, int stockQuantity, String description, Date createdAt) {
+        this(bookId, categoryId, title, author, publisher, publicationYear, isbn, price, stockQuantity, description, createdAt, "Bán");
+    }
+
+    public Book(int bookId, int categoryId, String title, String author, String publisher, int publicationYear, String isbn, double price, int stockQuantity, String description, Date createdAt, String bookStatus) {
         this.bookId = bookId;
         this.categoryId = categoryId;
         this.title = title;
@@ -28,9 +33,14 @@ public class Book {
         this.stockQuantity = stockQuantity;
         this.description = description;
         this.createdAt = createdAt;
+        this.bookStatus = bookStatus;
     }
 
     public Book(int categoryId, String title, String author, String publisher, int publicationYear, String isbn, double price, int stockQuantity, String description, Date createdAt) {
+        this(categoryId, title, author, publisher, publicationYear, isbn, price, stockQuantity, description, createdAt, "Bán");
+    }
+
+    public Book(int categoryId, String title, String author, String publisher, int publicationYear, String isbn, double price, int stockQuantity, String description, Date createdAt, String bookStatus) {
         this.categoryId = categoryId;
         this.title = title;
         this.author = author;
@@ -41,6 +51,7 @@ public class Book {
         this.stockQuantity = stockQuantity;
         this.description = description;
         this.createdAt = createdAt;
+        this.bookStatus = bookStatus;
     }
 
     public int getBookId() {
@@ -131,6 +142,14 @@ public class Book {
         this.createdAt = createdAt;
     }
 
+    public String getBookStatus() {
+        return bookStatus;
+    }
+
+    public void setBookStatus(String bookStatus) {
+        this.bookStatus = bookStatus;
+    }
+
     private String categoryName;
     private BookImages coverImage;
 
@@ -164,6 +183,6 @@ public class Book {
 
     @Override
     public String toString() {
-        return "Book{" + "bookId=" + bookId + ", categoryId=" + categoryId + ", title=" + title + ", author=" + author + ", publisher=" + publisher + ", publicationYear=" + publicationYear + ", isbn=" + isbn + ", price=" + price + ", stockQuantity=" + stockQuantity + ", description=" + description + ", createdAt=" + createdAt + '}';
+        return "Book{" + "bookId=" + bookId + ", categoryId=" + categoryId + ", title=" + title + ", author=" + author + ", publisher=" + publisher + ", publicationYear=" + publicationYear + ", isbn=" + isbn + ", price=" + price + ", stockQuantity=" + stockQuantity + ", description=" + description + ", createdAt=" + createdAt + ", bookStatus=" + bookStatus + '}';
     }
 }

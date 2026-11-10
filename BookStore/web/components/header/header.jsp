@@ -14,10 +14,10 @@
         <!-- 2. Các container task (Chính giữa màn hình căn dọc) -->
         <nav class="nav-task-links" aria-label="Menu chính">
             <a href="${pageContext.request.contextPath}/home" class="nav-link active">Trang Chủ</a>
+            <a href="${pageContext.request.contextPath}/catalog" class="nav-link">Tất Cả Danh Mục</a>
+            <a href="${pageContext.request.contextPath}/catalog?status=Cho+thu%C3%AA" class="nav-link">Sách Cho Thuê</a>
             <a href="${pageContext.request.contextPath}/home#featured" class="nav-link">Sách Nổi Bật</a>
-            <a href="${pageContext.request.contextPath}/home#catalog" class="nav-link">Tất Cả Danh Mục</a>
             <a href="${pageContext.request.contextPath}/home#newsletter" class="nav-link">Khuyến Mãi</a>
-            <a href="${pageContext.request.contextPath}/home#about" class="nav-link">Về Chúng Tôi</a>
         </nav>
 
         <!-- 3. Chức năng dạng Icon: Button tìm kiếm -> Giỏ hàng -> Login -->
@@ -31,14 +31,15 @@
             </button>
 
             <!-- 3.2 Giỏ Hàng -->
+            <c:set var="effectiveCartCount" value="${not empty cartCount ? cartCount : (not empty sessionScope.cartCount ? sessionScope.cartCount : 0)}" />
             <a href="${pageContext.request.contextPath}/cart" class="header-icon-btn cart-btn" id="navCartBtn" title="Giỏ hàng" aria-label="Giỏ hàng">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
                     <circle cx="9" cy="21" r="1"></circle>
                     <circle cx="20" cy="21" r="1"></circle>
                     <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
                 </svg>
-                <span class="cart-badge" id="navCartBadge" style="${cartCount > 0 ? '' : 'display:none;'}">
-                    ${cartCount}
+                <span class="cart-badge" id="navCartBadge" style="${effectiveCartCount > 0 ? '' : 'display:none;'}">
+                    ${effectiveCartCount}
                 </span>
             </a>
 
@@ -58,10 +59,22 @@
                                 <div class="user-dropdown-email">${sessionScope.user.email}</div>
                             </div>
                             <div class="user-dropdown-divider"></div>
+                            <a href="${pageContext.request.contextPath}/profile" class="user-dropdown-link">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                                <span>Hồ Sơ Cá Nhân</span>
+                            </a>
+                            <a href="${pageContext.request.contextPath}/my-orders" class="user-dropdown-link">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path><line x1="3" y1="6" x2="21" y2="6"></line><path d="M16 10a4 4 0 0 1-8 0"></path></svg>
+                                <span>Đơn Mua Của Tôi</span>
+                            </a>
                             <c:if test="${sessionScope.user.roleId == 2}">
-                                <a href="${pageContext.request.contextPath}/admin" class="user-dropdown-link">
+                                <a href="${pageContext.request.contextPath}/admindashboard" class="user-dropdown-link">
                                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
                                     <span>Trang Quản Trị</span>
+                                </a>
+                                <a href="${pageContext.request.contextPath}/admin-analytics" class="user-dropdown-link">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
+                                    <span>Báo Cáo Thống Kê</span>
                                 </a>
                             </c:if>
                             <a href="${pageContext.request.contextPath}/logout" class="user-dropdown-link logout">
@@ -158,6 +171,9 @@
                     </svg>
                 </button>
             </form>
+            <div style="text-align: center; margin-top: 14px; font-size: 13px; color: #64748b;">
+                Hoặc <a href="${pageContext.request.contextPath}/register" style="color: #4f46e5; font-weight: 700; text-decoration: none;">Đăng ký tài khoản đầy đủ →</a>
+            </div>
         </div>
 
         <!-- ================= BƯỚC 2: NHẬP MẬT KHẨU ================= -->

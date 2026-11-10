@@ -24,6 +24,17 @@ public class Order {
         this.createdAt = createdAt;
     }
 
+    public Order(int userId, double totalAmount, String orderStatus, String shippingAddress, String recipientPhone, String paymentMethod, String paymentStatus, Date createdAt) {
+        this.userId = userId;
+        this.totalAmount = totalAmount;
+        this.orderStatus = orderStatus;
+        this.shippingAddress = shippingAddress;
+        this.recipientPhone = recipientPhone;
+        this.paymentMethod = paymentMethod;
+        this.paymentStatus = paymentStatus;
+        this.createdAt = createdAt;
+    }
+
     public int getOrderId() {
         return orderId;
     }
@@ -94,6 +105,29 @@ public class Order {
 
     public void setCreatedAt(Date createdAt) {
         this.createdAt = createdAt;
+    }
+
+    private String customerName;
+    private java.util.Vector<OrderItem> items = new java.util.Vector<>();
+
+    public String getCustomerName() {
+        return customerName;
+    }
+
+    public void setCustomerName(String customerName) {
+        this.customerName = customerName;
+    }
+
+    public java.util.Vector<OrderItem> getItems() {
+        return items;
+    }
+
+    public void setItems(java.util.Vector<OrderItem> items) {
+        this.items = items;
+    }
+
+    public String getFormattedTotalAmount() {
+        return String.format("%,.0f đ", totalAmount).replace(',', '.');
     }
 
     @Override

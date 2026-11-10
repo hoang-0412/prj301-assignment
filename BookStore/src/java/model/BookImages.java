@@ -24,6 +24,14 @@ public class BookImages {
         this.createdAt = createdAt;
     }
 
+    public BookImages(int bookId, byte[] imageData, String mimeType, int isCover, Date createdAt) {
+        this.bookId = bookId;
+        this.imageData = imageData;
+        this.mimeType = mimeType;
+        this.isCover = isCover;
+        this.createdAt = createdAt;
+    }
+
     public BookImages(int bookId, byte[] imageData, String mimeType, int isCover) {
         this.bookId = bookId;
         this.imageData = imageData;

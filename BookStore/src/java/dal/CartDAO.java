@@ -61,9 +61,10 @@ public class CartDAO extends DBContext {
         String sql = "INSERT INTO [dbo].[Cart] ([userId], [createdAt], [updatedAt]) VALUES (?, ?, ?)";
         int n = 0;
         try (PreparedStatement ptm = connection.prepareStatement(sql, java.sql.Statement.RETURN_GENERATED_KEYS)) {
+            java.sql.Date now = new java.sql.Date(System.currentTimeMillis());
             ptm.setInt(1, c.getUserId());
-            ptm.setDate(2, c.getCreatedAt());
-            ptm.setDate(3, c.getUpdatedAt());
+            ptm.setDate(2, c.getCreatedAt() != null ? c.getCreatedAt() : now);
+            ptm.setDate(3, c.getUpdatedAt() != null ? c.getUpdatedAt() : now);
             n = ptm.executeUpdate();
             if (n > 0) {
                 try (ResultSet generatedKeys = ptm.getGeneratedKeys()) {
@@ -82,9 +83,10 @@ public class CartDAO extends DBContext {
         String sql = "UPDATE [dbo].[Cart] SET [userId] = ?, [createdAt] = ?, [updatedAt] = ? WHERE cartId = ?";
         int n = 0;
         try (PreparedStatement ptm = connection.prepareStatement(sql)) {
+            java.sql.Date now = new java.sql.Date(System.currentTimeMillis());
             ptm.setInt(1, c.getUserId());
-            ptm.setDate(2, c.getCreatedAt());
-            ptm.setDate(3, c.getUpdatedAt());
+            ptm.setDate(2, c.getCreatedAt() != null ? c.getCreatedAt() : now);
+            ptm.setDate(3, c.getUpdatedAt() != null ? c.getUpdatedAt() : now);
             ptm.setInt(4, c.getCartId());
             n = ptm.executeUpdate();
         } catch (SQLException ex) {

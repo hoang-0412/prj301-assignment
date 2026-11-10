@@ -60,8 +60,8 @@ public class CartItemDAO extends DBContext {
         try (PreparedStatement ptm = connection.prepareStatement(sql, java.sql.Statement.RETURN_GENERATED_KEYS)) {
             ptm.setInt(1, ci.getCartId());
             ptm.setInt(2, ci.getBookId());
-            ptm.setInt(3, ci.getQuantity());
-            ptm.setDate(4, ci.getAddedAt());
+            ptm.setInt(3, ci.getQuantity() > 0 ? ci.getQuantity() : 1);
+            ptm.setDate(4, ci.getAddedAt() != null ? ci.getAddedAt() : new java.sql.Date(System.currentTimeMillis()));
             n = ptm.executeUpdate();
             if (n > 0) {
                 try (ResultSet generatedKeys = ptm.getGeneratedKeys()) {
@@ -82,8 +82,8 @@ public class CartItemDAO extends DBContext {
         try (PreparedStatement ptm = connection.prepareStatement(sql)) {
             ptm.setInt(1, ci.getCartId());
             ptm.setInt(2, ci.getBookId());
-            ptm.setInt(3, ci.getQuantity());
-            ptm.setDate(4, ci.getAddedAt());
+            ptm.setInt(3, ci.getQuantity() > 0 ? ci.getQuantity() : 1);
+            ptm.setDate(4, ci.getAddedAt() != null ? ci.getAddedAt() : new java.sql.Date(System.currentTimeMillis()));
             ptm.setInt(5, ci.getCartItemId());
             n = ptm.executeUpdate();
         } catch (SQLException ex) {
@@ -106,7 +106,7 @@ public class CartItemDAO extends DBContext {
 
     public Vector<CartItem> getCartItemsByCartId(int cartId) {
         Vector<CartItem> vector = new Vector<>();
-        String sql = "SELECT cartItemId, cartId, bookId, quantity, addedAt FROM CartItem WHERE cartId = ?";
+        String sql = "SELECT cartItemId, cartId, bookId, quantity, addedAt FROM CartItem WHERE cartId = ? ORDER BY cartItemId DESC";
         try (PreparedStatement ptm = connection.prepareStatement(sql)) {
             ptm.setInt(1, cartId);
             try (ResultSet rs = ptm.executeQuery()) {
@@ -125,6 +125,40 @@ public class CartItemDAO extends DBContext {
             LOGGER.log(Level.SEVERE, "Lỗi khi lấy danh sách sản phẩm giỏ hàng của cartId: " + cartId, ex);
         }
         return vector;
+    }
+
+    public CartItem getCartItemByCartAndBook(int cartId, int bookId) {
+        String sql = "SELECT cartItemId, cartId, bookId, quantity, addedAt FROM CartItem WHERE cartId = ? AND bookId = ?";
+        try (PreparedStatement ptm = connection.prepareStatement(sql)) {
+            ptm.setInt(1, cartId);
+            ptm.setInt(2, bookId);
+            try (ResultSet rs = ptm.executeQuery()) {
+                if (rs.next()) {
+                    return new CartItem(
+                            rs.getInt(1),
+                            rs.getInt(2),
+                            rs.getInt(3),
+                            rs.getInt(4),
+                            rs.getDate(5)
+                    );
+                }
+            }
+        } catch (SQLException ex) {
+            LOGGER.log(Level.SEVERE, "Lỗi khi tìm sản phẩm trong giỏ theo cartId & bookId", ex);
+        }
+        return null;
+    }
+
+    public int clearCart(int cartId) {
+        String sql = "DELETE FROM CartItem WHERE cartId = ?";
+        int n = 0;
+        try (PreparedStatement ptm = connection.prepareStatement(sql)) {
+            ptm.setInt(1, cartId);
+            n = ptm.executeUpdate();
+        } catch (SQLException ex) {
+            LOGGER.log(Level.SEVERE, "Lỗi khi xóa toàn bộ sản phẩm trong giỏ cartId: " + cartId, ex);
+        }
+        return n;
     }
 
     public static void main(String[] args) {

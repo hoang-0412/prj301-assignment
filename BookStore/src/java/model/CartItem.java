@@ -65,6 +65,27 @@ public class CartItem {
         this.addedAt = addedAt;
     }
 
+    private Book book;
+
+    public Book getBook() {
+        return book;
+    }
+
+    public void setBook(Book book) {
+        this.book = book;
+    }
+
+    public double getSubtotal() {
+        if (book != null) {
+            return book.getPrice() * quantity;
+        }
+        return 0;
+    }
+
+    public String getFormattedSubtotal() {
+        return String.format("%,.0f đ", getSubtotal()).replace(',', '.');
+    }
+
     @Override
     public String toString() {
         return "CartItem{" + "cartItemId=" + cartItemId + ", cartId=" + cartId + ", bookId=" + bookId + ", quantity=" + quantity + ", addedAt=" + addedAt + '}';

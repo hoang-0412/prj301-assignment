@@ -136,7 +136,7 @@ public class UserDAO extends DBContext {
             ptm.setString(4, u.getPasswordHash());
             ptm.setString(5, u.getPhoneNumber());
             ptm.setString(6, u.getAddress());
-            ptm.setDate(7, u.getCreatedAt());
+            ptm.setDate(7, u.getCreatedAt() != null ? u.getCreatedAt() : new java.sql.Date(System.currentTimeMillis()));
             n = ptm.executeUpdate();
             if (n > 0) {
                 try (ResultSet generatedKeys = ptm.getGeneratedKeys()) {
@@ -161,11 +161,23 @@ public class UserDAO extends DBContext {
             ptm.setString(4, u.getPasswordHash());
             ptm.setString(5, u.getPhoneNumber());
             ptm.setString(6, u.getAddress());
-            ptm.setDate(7, u.getCreatedAt());
+            ptm.setDate(7, u.getCreatedAt() != null ? u.getCreatedAt() : new java.sql.Date(System.currentTimeMillis()));
             ptm.setInt(8, u.getUserId());
             n = ptm.executeUpdate();
         } catch (SQLException ex) {
             LOGGER.log(Level.SEVERE, "Lỗi khi cập nhật thông tin người dùng", ex);
+        }
+        return n;
+    }
+
+    public int deleteUser(int userId) {
+        String sql = "DELETE FROM [dbo].[User] WHERE userId = ?";
+        int n = 0;
+        try (PreparedStatement ptm = connection.prepareStatement(sql)) {
+            ptm.setInt(1, userId);
+            n = ptm.executeUpdate();
+        } catch (SQLException ex) {
+            LOGGER.log(Level.SEVERE, "Lỗi khi xóa người dùng có id: " + userId, ex);
         }
         return n;
     }

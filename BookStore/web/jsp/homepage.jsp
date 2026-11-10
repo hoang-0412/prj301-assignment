@@ -68,11 +68,17 @@
                             <span class="spotlight-badge">SÁCH TIÊU BIỂU TUẦN NÀY</span>
                             <div class="spotlight-book-grid">
                                 <div class="spotlight-cover">
-                                    <img src="${pageContext.request.contextPath}/book-image?bookId=${spotlightBook.bookId}" 
-                                         alt="${fn:escapeXml(spotlightBook.title)}" loading="eager">
+                                    <a href="${pageContext.request.contextPath}/book-detail?id=${spotlightBook.bookId}">
+                                        <img src="${pageContext.request.contextPath}/book-image?bookId=${spotlightBook.bookId}" 
+                                             alt="${fn:escapeXml(spotlightBook.title)}" loading="eager">
+                                    </a>
                                 </div>
                                 <div class="spotlight-info">
-                                    <h3>${spotlightBook.title}</h3>
+                                    <h3>
+                                        <a href="${pageContext.request.contextPath}/book-detail?id=${spotlightBook.bookId}" style="color:inherit; text-decoration:none;">
+                                            ${spotlightBook.title}
+                                        </a>
+                                    </h3>
                                     <p class="author">Tác giả: <strong>${spotlightBook.author}</strong></p>
                                     <div class="spotlight-rating">
                                         <span>Đánh giá: 5.0 (320+ lượt mua)</span>
@@ -135,6 +141,7 @@
                                  data-year="${b.publicationYear}"
                                  data-isbn="${b.isbn}"
                                  data-price="${b.formattedPrice}"
+                                 data-status="${fn:escapeXml(b.bookStatus)}"
                                  data-desc="${fn:escapeXml(b.description)}"
                                  data-image="${pageContext.request.contextPath}/book-image?bookId=${b.bookId}">
                             <div class="card-image-wrap">
@@ -146,10 +153,15 @@
                                     <button type="button" class="action-btn-quick btn-quick-view" aria-label="Xem nhanh">
                                         <span>Xem Nhanh</span>
                                     </button>
+                                    <a href="${pageContext.request.contextPath}/book-detail?id=${b.bookId}" class="action-btn-quick" style="text-decoration:none;">
+                                        <span>Chi Tiết</span>
+                                    </a>
                                 </div>
                             </div>
                             <div class="card-body">
-                                <h3 class="card-title" title="${fn:escapeXml(b.title)}">${b.title}</h3>
+                                <h3 class="card-title" title="${fn:escapeXml(b.title)}">
+                                    <a href="${pageContext.request.contextPath}/book-detail?id=${b.bookId}" style="color:inherit; text-decoration:none;">${b.title}</a>
+                                </h3>
                                 <p class="card-author">
                                     Tác giả: <strong>${b.author}</strong>
                                 </p>
@@ -233,6 +245,7 @@
                                      data-year="${b.publicationYear}"
                                      data-isbn="${b.isbn}"
                                      data-price="${b.formattedPrice}"
+                                     data-status="${fn:escapeXml(b.bookStatus)}"
                                      data-desc="${fn:escapeXml(b.description)}"
                                      data-image="${pageContext.request.contextPath}/book-image?bookId=${b.bookId}">
                                 <div class="card-image-wrap">
@@ -247,10 +260,15 @@
                                         <button type="button" class="action-btn-quick btn-quick-view" aria-label="Xem nhanh">
                                             <span>Xem Nhanh</span>
                                         </button>
+                                        <a href="${pageContext.request.contextPath}/book-detail?id=${b.bookId}" class="action-btn-quick" style="text-decoration:none;">
+                                            <span>Chi Tiết</span>
+                                        </a>
                                     </div>
                                 </div>
                                 <div class="card-body">
-                                    <h3 class="card-title" title="${fn:escapeXml(b.title)}">${b.title}</h3>
+                                    <h3 class="card-title" title="${fn:escapeXml(b.title)}">
+                                        <a href="${pageContext.request.contextPath}/book-detail?id=${b.bookId}" style="color:inherit; text-decoration:none;">${b.title}</a>
+                                    </h3>
                                     <p class="card-author">
                                         Tác giả: <strong>${b.author}</strong>
                                     </p>
@@ -335,7 +353,7 @@
         <jsp:include page="/components/footer/footer.jsp" />
 
         <!-- 10. QUICK VIEW MODAL -->
-        <div class="modal-overlay" id="quickViewModal" role="dialog" aria-modal="true" aria-labelledby="modalBookTitle">
+        <div class="modal-overlay" id="quickViewModal" data-context-path="${pageContext.request.contextPath}" role="dialog" aria-modal="true" aria-labelledby="modalBookTitle">
             <div class="modal-container">
                 <button type="button" class="modal-close-btn" id="modalCloseBtn" aria-label="Đóng cửa sổ">✕</button>
                 <div class="modal-content-grid">
@@ -355,7 +373,7 @@
                         <div class="modal-description" id="modalBookDesc">
                             Mô tả chi tiết cuốn sách...
                         </div>
-                        <div class="modal-actions">
+                        <div class="modal-actions" style="flex-wrap:wrap; gap:10px;">
                             <div class="quantity-control">
                                 <button type="button" class="qty-btn" id="qtyMinusBtn">-</button>
                                 <input type="number" id="modalQtyInput" class="qty-input" value="1" min="1" max="99" readonly>
@@ -365,6 +383,9 @@
                                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path><line x1="3" y1="6" x2="21" y2="6"></line><path d="M16 10a4 4 0 0 1-8 0"></path></svg>
                                 <span>Thêm Vào Giỏ</span>
                             </button>
+                            <a href="#" id="modalViewDetailLink" class="btn-secondary" style="padding: 10px 18px; text-decoration:none; color:#334155; border:1px solid #cbd5e1; border-radius:10px; font-weight:600;">
+                                Xem Chi Tiết →
+                            </a>
                         </div>
                     </div>
                 </div>

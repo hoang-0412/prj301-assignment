@@ -81,6 +81,18 @@ public class CategoryDAO extends DBContext {
         return n;
     }
 
+    public int deleteCategory(int categoryId) {
+        String sql = "DELETE FROM [dbo].[Category] WHERE categoryId = ?";
+        int n = 0;
+        try (PreparedStatement ptm = connection.prepareStatement(sql)) {
+            ptm.setInt(1, categoryId);
+            n = ptm.executeUpdate();
+        } catch (SQLException ex) {
+            LOGGER.log(Level.SEVERE, "Lỗi khi xóa thể loại có id: " + categoryId, ex);
+        }
+        return n;
+    }
+
     public static void main(String[] args) {
         CategoryDAO dao = new CategoryDAO();
         Vector<Category> vector = dao.getAllCategory();
