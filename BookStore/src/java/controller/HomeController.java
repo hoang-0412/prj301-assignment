@@ -18,7 +18,7 @@ import model.CartItem;
 import model.Category;
 import model.User;
 
-@WebServlet(name = "HomeController", urlPatterns = {"/homepage"})
+@WebServlet(name = "HomeController", urlPatterns = {"/homepage", "/home"})
 public class HomeController extends HttpServlet {
 
     private final BookDAO bookDAO = new BookDAO();

@@ -135,6 +135,7 @@
                                  data-year="${b.publicationYear}"
                                  data-isbn="${b.isbn}"
                                  data-price="${b.formattedPrice}"
+                                 data-status="${fn:escapeXml(b.bookStatus)}"
                                  data-desc="${fn:escapeXml(b.description)}"
                                  data-image="${pageContext.request.contextPath}/book-image?bookId=${b.bookId}">
                             <div class="card-image-wrap">
@@ -233,6 +234,7 @@
                                      data-year="${b.publicationYear}"
                                      data-isbn="${b.isbn}"
                                      data-price="${b.formattedPrice}"
+                                     data-status="${fn:escapeXml(b.bookStatus)}"
                                      data-desc="${fn:escapeXml(b.description)}"
                                      data-image="${pageContext.request.contextPath}/book-image?bookId=${b.bookId}">
                                 <div class="card-image-wrap">

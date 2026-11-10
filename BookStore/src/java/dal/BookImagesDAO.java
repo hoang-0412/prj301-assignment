@@ -105,12 +105,13 @@ public class BookImagesDAO extends DBContext {
     }
 
     public int insertBookImage(BookImages bi) {
-        String sql = "INSERT INTO BookImages (bookId, imageData, mimeType, isCover) VALUES (?, ?, ?, ?)";
+        String sql = "INSERT INTO BookImages (bookId, imageData, mimeType, isCover, createdAt) VALUES (?, ?, ?, ?, ?)";
         try (PreparedStatement ptm = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             ptm.setInt(1, bi.getBookId());
             ptm.setBytes(2, bi.getImageData());
             ptm.setString(3, bi.getMimeType());
             ptm.setInt(4, bi.getIsCover());
+            ptm.setDate(5, bi.getCreatedAt() != null ? bi.getCreatedAt() : new java.sql.Date(System.currentTimeMillis()));
 
             int affectedRows = ptm.executeUpdate();
             if (affectedRows > 0) {
@@ -136,6 +137,21 @@ public class BookImagesDAO extends DBContext {
             LOGGER.log(Level.SEVERE, "Lỗi khi xóa ảnh có imageId: " + imageId, ex);
         }
         return 0;
+    }
+
+    public int saveOrUpdateCoverImage(int bookId, byte[] imageData, String mimeType) {
+        if (imageData == null || imageData.length == 0) {
+            return 0;
+        }
+        String resetSql = "UPDATE BookImages SET isCover = 0 WHERE bookId = ?";
+        try (PreparedStatement resetPtm = connection.prepareStatement(resetSql)) {
+            resetPtm.setInt(1, bookId);
+            resetPtm.executeUpdate();
+        } catch (SQLException ex) {
+            LOGGER.log(Level.WARNING, "Lỗi khi đặt lại ảnh bìa cũ cho bookId: " + bookId, ex);
+        }
+        BookImages bi = new BookImages(bookId, imageData, (mimeType != null && !mimeType.isEmpty()) ? mimeType : "image/jpeg", 1, new java.sql.Date(System.currentTimeMillis()));
+        return insertBookImage(bi);
     }
 
     public static void main(String[] args) {

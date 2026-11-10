@@ -107,6 +107,20 @@ public class Order {
         this.createdAt = createdAt;
     }
 
+    private String customerName;
+
+    public String getCustomerName() {
+        return customerName;
+    }
+
+    public void setCustomerName(String customerName) {
+        this.customerName = customerName;
+    }
+
+    public String getFormattedTotalAmount() {
+        return String.format("%,.0f đ", totalAmount).replace(',', '.');
+    }
+
     @Override
     public String toString() {
         return "Order{" + "orderId=" + orderId + ", userId=" + userId + ", totalAmount=" + totalAmount + ", orderStatus=" + orderStatus + ", shippingAddress=" + shippingAddress + ", recipientPhone=" + recipientPhone + ", paymentMethod=" + paymentMethod + ", paymentStatus=" + paymentStatus + ", createdAt=" + createdAt + '}';

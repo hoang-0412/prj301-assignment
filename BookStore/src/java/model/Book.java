@@ -17,6 +17,10 @@ public class Book {
     public Book() {
     }
 
+    public Book(int bookId, int categoryId, String title, String author, String publisher, int publicationYear, String isbn, double price, int stockQuantity, String description, Date createdAt) {
+        this(bookId, categoryId, title, author, publisher, publicationYear, isbn, price, stockQuantity, description, createdAt, "Bán");
+    }
+
     public Book(int bookId, int categoryId, String title, String author, String publisher, int publicationYear, String isbn, double price, int stockQuantity, String description, Date createdAt, String bookStatus) {
         this.bookId = bookId;
         this.categoryId = categoryId;
@@ -32,6 +36,10 @@ public class Book {
         this.bookStatus = bookStatus;
     }
 
+    public Book(int categoryId, String title, String author, String publisher, int publicationYear, String isbn, double price, int stockQuantity, String description, Date createdAt) {
+        this(categoryId, title, author, publisher, publicationYear, isbn, price, stockQuantity, description, createdAt, "Bán");
+    }
+
     public Book(int categoryId, String title, String author, String publisher, int publicationYear, String isbn, double price, int stockQuantity, String description, Date createdAt, String bookStatus) {
         this.categoryId = categoryId;
         this.title = title;
@@ -44,14 +52,6 @@ public class Book {
         this.description = description;
         this.createdAt = createdAt;
         this.bookStatus = bookStatus;
-    }
-
-    public Book(int bookId, int categoryId, String title, String author, String publisher, int publicationYear, String isbn, double price, int stockQuantity, String description, Date createdAt) {
-        this(bookId, categoryId, title, author, publisher, publicationYear, isbn, price, stockQuantity, description, createdAt, null);
-    }
-
-    public Book(int categoryId, String title, String author, String publisher, int publicationYear, String isbn, double price, int stockQuantity, String description, Date createdAt) {
-        this(categoryId, title, author, publisher, publicationYear, isbn, price, stockQuantity, description, createdAt, null);
     }
 
     public int getBookId() {

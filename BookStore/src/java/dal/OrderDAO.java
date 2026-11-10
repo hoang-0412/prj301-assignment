@@ -14,8 +14,11 @@ public class OrderDAO extends DBContext {
 
     public Vector<Order> getAllOrder() {
         Vector<Order> vector = new Vector<>();
-        String sql = "SELECT orderId, userId, totalAmount, orderStatus, shippingAddress, "
-                + "recipientPhone, paymentMethod, paymentStatus, createdAt FROM [Order] ORDER BY orderId DESC";
+        String sql = "SELECT o.orderId, o.userId, o.totalAmount, o.orderStatus, o.shippingAddress, "
+                + "o.recipientPhone, o.paymentMethod, o.paymentStatus, o.createdAt, u.fullName "
+                + "FROM [Order] o "
+                + "LEFT JOIN [User] u ON o.userId = u.userId "
+                + "ORDER BY o.orderId DESC";
         try (PreparedStatement ptm = connection.prepareStatement(sql);
              ResultSet rs = ptm.executeQuery()) {
             while (rs.next()) {
@@ -30,6 +33,7 @@ public class OrderDAO extends DBContext {
                         rs.getString(8),
                         rs.getDate(9)
                 );
+                o.setCustomerName(rs.getString(10));
                 vector.add(o);
             }
         } catch (SQLException ex) {
@@ -108,12 +112,12 @@ public class OrderDAO extends DBContext {
         try (PreparedStatement ptm = connection.prepareStatement(sql, java.sql.Statement.RETURN_GENERATED_KEYS)) {
             ptm.setInt(1, o.getUserId());
             ptm.setDouble(2, o.getTotalAmount());
-            ptm.setString(3, o.getOrderStatus());
+            ptm.setString(3, o.getOrderStatus() != null ? o.getOrderStatus() : "Pending");
             ptm.setString(4, o.getShippingAddress());
             ptm.setString(5, o.getRecipientPhone());
-            ptm.setString(6, o.getPaymentMethod());
-            ptm.setString(7, o.getPaymentStatus());
-            ptm.setDate(8, o.getCreatedAt());
+            ptm.setString(6, o.getPaymentMethod() != null ? o.getPaymentMethod() : "COD");
+            ptm.setString(7, o.getPaymentStatus() != null ? o.getPaymentStatus() : "Unpaid");
+            ptm.setDate(8, o.getCreatedAt() != null ? o.getCreatedAt() : new java.sql.Date(System.currentTimeMillis()));
             n = ptm.executeUpdate();
             if (n > 0) {
                 try (ResultSet generatedKeys = ptm.getGeneratedKeys()) {
@@ -143,16 +147,28 @@ public class OrderDAO extends DBContext {
         try (PreparedStatement ptm = connection.prepareStatement(sql)) {
             ptm.setInt(1, o.getUserId());
             ptm.setDouble(2, o.getTotalAmount());
-            ptm.setString(3, o.getOrderStatus());
+            ptm.setString(3, o.getOrderStatus() != null ? o.getOrderStatus() : "Pending");
             ptm.setString(4, o.getShippingAddress());
             ptm.setString(5, o.getRecipientPhone());
-            ptm.setString(6, o.getPaymentMethod());
-            ptm.setString(7, o.getPaymentStatus());
-            ptm.setDate(8, o.getCreatedAt());
+            ptm.setString(6, o.getPaymentMethod() != null ? o.getPaymentMethod() : "COD");
+            ptm.setString(7, o.getPaymentStatus() != null ? o.getPaymentStatus() : "Unpaid");
+            ptm.setDate(8, o.getCreatedAt() != null ? o.getCreatedAt() : new java.sql.Date(System.currentTimeMillis()));
             ptm.setInt(9, o.getOrderId());
             n = ptm.executeUpdate();
         } catch (SQLException ex) {
             LOGGER.log(Level.SEVERE, "Lỗi khi cập nhật đơn hàng", ex);
+        }
+        return n;
+    }
+
+    public int deleteOrder(int orderId) {
+        String sql = "DELETE FROM [dbo].[Order] WHERE orderId = ?";
+        int n = 0;
+        try (PreparedStatement ptm = connection.prepareStatement(sql)) {
+            ptm.setInt(1, orderId);
+            n = ptm.executeUpdate();
+        } catch (SQLException ex) {
+            LOGGER.log(Level.SEVERE, "Lỗi khi xóa đơn hàng có id: " + orderId, ex);
         }
         return n;
     }

@@ -281,8 +281,7 @@ public class BookDAO extends DBContext {
                 + "     VALUES\n"
                 + "           (?,?,?,?,?,?,?,?,?,?,?)";
         int n = 0;
-        try {
-            PreparedStatement ptm = connection.prepareStatement(sql, java.sql.Statement.RETURN_GENERATED_KEYS);
+        try (PreparedStatement ptm = connection.prepareStatement(sql, java.sql.Statement.RETURN_GENERATED_KEYS)) {
             ptm.setInt(1, b.getCategoryId());
             ptm.setString(2, b.getTitle());
             ptm.setString(3, b.getAuthor());
@@ -293,7 +292,7 @@ public class BookDAO extends DBContext {
             ptm.setInt(8, b.getStockQuantity());
             ptm.setString(9, b.getDescription());
             ptm.setDate(10, b.getCreatedAt() != null ? b.getCreatedAt() : new java.sql.Date(System.currentTimeMillis()));
-            ptm.setString(11, b.getBookStatus() != null ? b.getBookStatus() : "Bán");
+            ptm.setString(11, (b.getBookStatus() != null && !b.getBookStatus().trim().isEmpty()) ? b.getBookStatus() : "Bán");
             n = ptm.executeUpdate();
             if (n > 0) {
                 try (ResultSet generatedKeys = ptm.getGeneratedKeys()) {
@@ -334,7 +333,7 @@ public class BookDAO extends DBContext {
             ptm.setInt(8, b.getStockQuantity());
             ptm.setString(9, b.getDescription());
             ptm.setDate(10, b.getCreatedAt() != null ? b.getCreatedAt() : new java.sql.Date(System.currentTimeMillis()));
-            ptm.setString(11, b.getBookStatus() != null ? b.getBookStatus() : "Bán");
+            ptm.setString(11, (b.getBookStatus() != null && !b.getBookStatus().trim().isEmpty()) ? b.getBookStatus() : "Bán");
             ptm.setInt(12, b.getBookId());
             n = ptm.executeUpdate();
         } catch (SQLException ex) {

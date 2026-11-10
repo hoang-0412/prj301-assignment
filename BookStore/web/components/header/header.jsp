@@ -59,7 +59,7 @@
                             </div>
                             <div class="user-dropdown-divider"></div>
                             <c:if test="${sessionScope.user.roleId == 2}">
-                                <a href="${pageContext.request.contextPath}/admin" class="user-dropdown-link">
+                                <a href="${pageContext.request.contextPath}/admindashboard" class="user-dropdown-link">
                                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
                                     <span>Trang Quản Trị</span>
                                 </a>

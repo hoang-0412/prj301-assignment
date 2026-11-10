@@ -96,6 +96,10 @@ public class User {
         this.createdAt = createdAt;
     }
 
+    public String getRoleName() {
+        return roleId == 2 ? "Admin" : "Customer";
+    }
+
     @Override
     public String toString() {
         return "User{" + "userId=" + userId + ", roleId=" + roleId + ", fullName=" + fullName + ", email=" + email + ", passwordHash=" + passwordHash + ", phoneNumber=" + phoneNumber + ", address=" + address + ", createdAt=" + createdAt + '}';

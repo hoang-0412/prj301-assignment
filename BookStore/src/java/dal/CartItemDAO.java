@@ -60,8 +60,8 @@ public class CartItemDAO extends DBContext {
         try (PreparedStatement ptm = connection.prepareStatement(sql, java.sql.Statement.RETURN_GENERATED_KEYS)) {
             ptm.setInt(1, ci.getCartId());
             ptm.setInt(2, ci.getBookId());
-            ptm.setInt(3, ci.getQuantity());
-            ptm.setDate(4, ci.getAddedAt());
+            ptm.setInt(3, ci.getQuantity() > 0 ? ci.getQuantity() : 1);
+            ptm.setDate(4, ci.getAddedAt() != null ? ci.getAddedAt() : new java.sql.Date(System.currentTimeMillis()));
             n = ptm.executeUpdate();
             if (n > 0) {
                 try (ResultSet generatedKeys = ptm.getGeneratedKeys()) {
@@ -82,8 +82,8 @@ public class CartItemDAO extends DBContext {
         try (PreparedStatement ptm = connection.prepareStatement(sql)) {
             ptm.setInt(1, ci.getCartId());
             ptm.setInt(2, ci.getBookId());
-            ptm.setInt(3, ci.getQuantity());
-            ptm.setDate(4, ci.getAddedAt());
+            ptm.setInt(3, ci.getQuantity() > 0 ? ci.getQuantity() : 1);
+            ptm.setDate(4, ci.getAddedAt() != null ? ci.getAddedAt() : new java.sql.Date(System.currentTimeMillis()));
             ptm.setInt(5, ci.getCartItemId());
             n = ptm.executeUpdate();
         } catch (SQLException ex) {
