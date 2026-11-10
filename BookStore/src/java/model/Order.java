@@ -108,6 +108,7 @@ public class Order {
     }
 
     private String customerName;
+    private java.util.Vector<OrderItem> items = new java.util.Vector<>();
 
     public String getCustomerName() {
         return customerName;
@@ -115,6 +116,14 @@ public class Order {
 
     public void setCustomerName(String customerName) {
         this.customerName = customerName;
+    }
+
+    public java.util.Vector<OrderItem> getItems() {
+        return items;
+    }
+
+    public void setItems(java.util.Vector<OrderItem> items) {
+        this.items = items;
     }
 
     public String getFormattedTotalAmount() {

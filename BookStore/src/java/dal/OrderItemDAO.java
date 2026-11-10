@@ -56,7 +56,10 @@ public class OrderItemDAO extends DBContext {
 
     public Vector<OrderItem> getOrderItemsByOrderId(int orderId) {
         Vector<OrderItem> vector = new Vector<>();
-        String sql = "SELECT orderItemId, orderId, bookId, quantity, unitPrice FROM OrderItem WHERE orderId = ?";
+        String sql = "SELECT oi.orderItemId, oi.orderId, oi.bookId, oi.quantity, oi.unitPrice, b.title "
+                + "FROM OrderItem oi "
+                + "LEFT JOIN Book b ON oi.bookId = b.bookId "
+                + "WHERE oi.orderId = ?";
         try (PreparedStatement ptm = connection.prepareStatement(sql)) {
             ptm.setInt(1, orderId);
             try (ResultSet rs = ptm.executeQuery()) {
@@ -68,6 +71,7 @@ public class OrderItemDAO extends DBContext {
                             rs.getInt(4),
                             rs.getDouble(5)
                     );
+                    oi.setBookTitle(rs.getString(6));
                     vector.add(oi);
                 }
             }

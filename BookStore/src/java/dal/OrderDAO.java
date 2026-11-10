@@ -36,6 +36,10 @@ public class OrderDAO extends DBContext {
                 o.setCustomerName(rs.getString(10));
                 vector.add(o);
             }
+            OrderItemDAO itemDAO = new OrderItemDAO();
+            for (Order o : vector) {
+                o.setItems(itemDAO.getOrderItemsByOrderId(o.getOrderId()));
+            }
         } catch (SQLException ex) {
             LOGGER.log(Level.SEVERE, "Lỗi khi lấy danh sách đơn hàng", ex);
         }

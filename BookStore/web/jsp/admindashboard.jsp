@@ -383,13 +383,17 @@
                 <div class="panel-header">
                     <div class="panel-title-group">
                         <h2>Quản Lý Đơn Đặt Hàng</h2>
-                        <p>Theo dõi và cập nhật trạng thái đơn hàng, trạng thái thanh toán từ bảng Order</p>
+                        <p>Theo dõi, tạo chủ động và cập nhật trạng thái đơn hàng từ bảng Order & OrderItem</p>
                     </div>
+                    <button type="button" class="btn-admin btn-admin-primary" id="btnOpenAddOrder">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                        <span>Tạo Đơn Hàng Mới</span>
+                    </button>
                 </div>
 
                 <div class="panel-toolbar">
                     <input type="text" class="filter-input js-table-filter" data-target="ordersTable"
-                           placeholder="Tìm đơn hàng theo mã, tên khách, SĐT, địa chỉ...">
+                           placeholder="Tìm đơn hàng theo mã, tên khách, sách đặt, SĐT, địa chỉ...">
                 </div>
 
                 <div class="table-responsive">
@@ -398,6 +402,7 @@
                             <tr>
                                 <th>Mã Đơn</th>
                                 <th>Khách Hàng</th>
+                                <th>Sản Phẩm Đặt</th>
                                 <th>SĐT Nhận</th>
                                 <th>Địa Chỉ Giao Hàng</th>
                                 <th>Tổng Tiền</th>
@@ -416,6 +421,23 @@
                                             <td>
                                                 <strong>${not empty o.customerName ? fn:escapeXml(o.customerName) : 'User #' += o.userId}</strong>
                                                 <div style="font-size:12px; color:#64748b;">ID: #${o.userId}</div>
+                                            </td>
+                                            <td>
+                                                <c:choose>
+                                                    <c:when test="${not empty o.items}">
+                                                        <div class="order-items-cell">
+                                                            <c:forEach items="${o.items}" var="item">
+                                                                <div class="order-item-badge">
+                                                                    <span class="oi-title">${not empty item.bookTitle ? fn:escapeXml(item.bookTitle) : ('Sách #' += item.bookId)}</span>
+                                                                    <span class="oi-qty">x${item.quantity}</span>
+                                                                </div>
+                                                            </c:forEach>
+                                                        </div>
+                                                    </c:when>
+                                                    <c:otherwise>
+                                                        <span style="font-size:12px; color:#94a3b8;">Chưa có chi tiết</span>
+                                                    </c:otherwise>
+                                                </c:choose>
                                             </td>
                                             <td>${fn:escapeXml(o.recipientPhone)}</td>
                                             <td>${fn:escapeXml(o.shippingAddress)}</td>
@@ -456,7 +478,7 @@
                                 </c:when>
                                 <c:otherwise>
                                     <tr>
-                                        <td colspan="9" class="empty-table-box">
+                                        <td colspan="10" class="empty-table-box">
                                             Chưa có đơn đặt hàng nào trong cơ sở dữ liệu.
                                         </td>
                                     </tr>
@@ -681,7 +703,115 @@
         </div>
 
         <!-- ==========================================================
-             MODAL 3: CẬP NHẬT ĐƠN HÀNG (ORDER MODAL)
+             MODAL 3A: TẠO ĐƠN HÀNG CHỦ ĐỘNG (ADD ORDER MODAL)
+             ========================================================== -->
+        <div class="adm-modal-overlay" id="addOrderModal">
+            <div class="adm-modal-card">
+                <div class="adm-modal-header">
+                    <h3>Tạo Đơn Hàng Chủ Động</h3>
+                    <button type="button" class="adm-modal-close" data-close-modal>✕</button>
+                </div>
+                <form action="${pageContext.request.contextPath}/admindashboard" method="POST" id="addOrderForm">
+                    <input type="hidden" name="action" value="addOrder">
+                    <div class="adm-modal-body">
+                        <div class="adm-form-grid">
+                            <div class="adm-form-group full-width">
+                                <label for="addOrderUserSelect">Khách hàng đặt mua <span class="req">*</span></label>
+                                <select name="userId" id="addOrderUserSelect" class="adm-select" required>
+                                    <option value="">-- Chọn khách hàng trong hệ thống --</option>
+                                    <c:forEach items="${users}" var="u">
+                                        <option value="${u.userId}"
+                                                data-phone="${fn:escapeXml(u.phoneNumber)}"
+                                                data-address="${fn:escapeXml(u.address)}">
+                                            #${u.userId} - ${fn:escapeXml(u.fullName)} (${fn:escapeXml(u.email)})${u.roleId == 2 ? ' [Admin]' : ''}
+                                        </option>
+                                    </c:forEach>
+                                </select>
+                            </div>
+
+                            <div class="adm-form-group">
+                                <label for="addOrderPhoneInput">Số điện thoại nhận hàng <span class="req">*</span></label>
+                                <input type="text" name="recipientPhone" id="addOrderPhoneInput" class="adm-input" placeholder="09xxxxxxxx" required>
+                            </div>
+
+                            <div class="adm-form-group">
+                                <label for="addOrderPaymentMethod">Phương thức thanh toán</label>
+                                <select name="paymentMethod" id="addOrderPaymentMethod" class="adm-select">
+                                    <option value="COD">COD (Thanh toán khi nhận hàng)</option>
+                                    <option value="Chuyển khoản">Chuyển khoản ngân hàng</option>
+                                    <option value="Tiền mặt tại quầy">Tiền mặt tại quầy</option>
+                                    <option value="VNPay">Ví VNPay</option>
+                                    <option value="MoMo">Ví MoMo</option>
+                                </select>
+                            </div>
+
+                            <div class="adm-form-group full-width">
+                                <label for="addOrderAddressInput">Địa chỉ giao hàng <span class="req">*</span></label>
+                                <input type="text" name="shippingAddress" id="addOrderAddressInput" class="adm-input" placeholder="Nhập địa chỉ nhận hàng..." required>
+                            </div>
+
+                            <div class="adm-form-group">
+                                <label for="addOrderStatusInput">Trạng thái đơn hàng</label>
+                                <select name="orderStatus" id="addOrderStatusInput" class="adm-select">
+                                    <option value="Pending">Pending (Chờ xử lý)</option>
+                                    <option value="Processing">Processing (Đang chuẩn bị)</option>
+                                    <option value="Shipped">Shipped (Đang giao)</option>
+                                    <option value="Completed">Completed (Hoàn thành)</option>
+                                </select>
+                            </div>
+
+                            <div class="adm-form-group">
+                                <label for="addOrderPaymentStatusInput">Trạng thái thanh toán</label>
+                                <select name="paymentStatus" id="addOrderPaymentStatusInput" class="adm-select">
+                                    <option value="Unpaid">Unpaid (Chưa thanh toán)</option>
+                                    <option value="Paid">Paid (Đã thanh toán)</option>
+                                </select>
+                            </div>
+
+                            <!-- Danh sách sản phẩm trong đơn -->
+                            <div class="adm-form-group full-width">
+                                <div class="order-items-header">
+                                    <label>Danh sách sách đặt mua <span class="req">*</span></label>
+                                    <button type="button" class="btn-admin btn-icon-sm btn-edit" id="btnAddOrderItemRow">
+                                        + Thêm Sách Khác
+                                    </button>
+                                </div>
+
+                                <div id="orderItemsContainer" class="order-items-builder">
+                                    <div class="order-item-row">
+                                        <select name="orderBookId" class="adm-select js-order-book-select" required>
+                                            <option value="" data-price="0" data-stock="0">-- Chọn đầu sách --</option>
+                                            <c:forEach items="${not empty allBooksList ? allBooksList : books}" var="b">
+                                                <c:if test="${b.stockQuantity > 0}">
+                                                    <option value="${b.bookId}" data-price="${b.price}" data-stock="${b.stockQuantity}">
+                                                        #${b.bookId} - ${fn:escapeXml(b.title)} (${b.formattedPrice} | Tồn: ${b.stockQuantity})
+                                                    </option>
+                                                </c:if>
+                                            </c:forEach>
+                                        </select>
+                                        <input type="number" name="orderQuantity" class="adm-input js-order-qty-input"
+                                               value="1" min="1" max="999" title="Số lượng" required>
+                                        <button type="button" class="btn-admin btn-icon-sm btn-delete js-remove-order-row" title="Xóa dòng này">✕</button>
+                                    </div>
+                                </div>
+
+                                <div class="order-total-preview-bar">
+                                    <span>Tổng cộng tạm tính:</span>
+                                    <strong id="addOrderTotalPreview">0 đ</strong>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="adm-modal-footer">
+                        <button type="button" class="btn-admin btn-admin-secondary" data-close-modal>Hủy</button>
+                        <button type="submit" class="btn-admin btn-admin-primary">Tạo Đơn Hàng</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- ==========================================================
+             MODAL 3B: CẬP NHẬT ĐƠN HÀNG (ORDER MODAL)
              ========================================================== -->
         <div class="adm-modal-overlay" id="orderModal">
             <div class="adm-modal-card modal-sm">

@@ -7,6 +7,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initAdminTabs();
     initBookModal();
     initCategoryModal();
+    initAddOrderModal();
     initOrderModal();
     initUserModal();
     initDeleteModal();
@@ -144,7 +145,137 @@ function initCategoryModal() {
     });
 }
 
-/* 4. Order Edit Modal */
+/* 4A. Proactive Order Creation Modal (Add Order) */
+function initAddOrderModal() {
+    const modal = document.getElementById('addOrderModal');
+    const openBtn = document.getElementById('btnOpenAddOrder');
+    const userSelect = document.getElementById('addOrderUserSelect');
+    const phoneInput = document.getElementById('addOrderPhoneInput');
+    const addressInput = document.getElementById('addOrderAddressInput');
+    const itemsContainer = document.getElementById('orderItemsContainer');
+    const addRowBtn = document.getElementById('btnAddOrderItemRow');
+    const totalPreview = document.getElementById('addOrderTotalPreview');
+
+    if (!modal || !itemsContainer) return;
+
+    function formatCurrencyVND(amount) {
+        const rounded = Math.round(amount || 0);
+        return rounded.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.') + ' đ';
+    }
+
+    function recalculateOrderTotal() {
+        let total = 0;
+        const rows = itemsContainer.querySelectorAll('.order-item-row');
+        rows.forEach(row => {
+            const selectEl = row.querySelector('.js-order-book-select');
+            const qtyEl = row.querySelector('.js-order-qty-input');
+            if (!selectEl || !qtyEl) return;
+
+            const selectedOpt = selectEl.options[selectEl.selectedIndex];
+            const price = selectedOpt ? parseFloat(selectedOpt.dataset.price || '0') : 0;
+            const stock = selectedOpt ? parseInt(selectedOpt.dataset.stock || '999', 10) : 999;
+
+            if (stock > 0) {
+                qtyEl.max = String(stock);
+            }
+            let qty = parseInt(qtyEl.value || '0', 10);
+            if (isNaN(qty) || qty < 1) {
+                qty = 0;
+            }
+            total += price * qty;
+        });
+
+        if (totalPreview) {
+            totalPreview.textContent = formatCurrencyVND(total);
+        }
+    }
+
+    function bindOrderRowEvents(row) {
+        const selectEl = row.querySelector('.js-order-book-select');
+        const qtyEl = row.querySelector('.js-order-qty-input');
+        const removeBtn = row.querySelector('.js-remove-order-row');
+
+        if (selectEl) {
+            selectEl.addEventListener('change', recalculateOrderTotal);
+        }
+        if (qtyEl) {
+            qtyEl.addEventListener('input', recalculateOrderTotal);
+            qtyEl.addEventListener('change', recalculateOrderTotal);
+        }
+        if (removeBtn) {
+            removeBtn.addEventListener('click', () => {
+                const allRows = itemsContainer.querySelectorAll('.order-item-row');
+                if (allRows.length > 1) {
+                    row.remove();
+                } else {
+                    if (selectEl) selectEl.value = '';
+                    if (qtyEl) qtyEl.value = '1';
+                }
+                recalculateOrderTotal();
+            });
+        }
+    }
+
+    // Bind initial row
+    itemsContainer.querySelectorAll('.order-item-row').forEach(bindOrderRowEvents);
+
+    // Add new book row
+    if (addRowBtn) {
+        addRowBtn.addEventListener('click', () => {
+            const firstRow = itemsContainer.querySelector('.order-item-row');
+            if (!firstRow) return;
+            const clone = firstRow.cloneNode(true);
+            const selectEl = clone.querySelector('.js-order-book-select');
+            const qtyEl = clone.querySelector('.js-order-qty-input');
+            if (selectEl) selectEl.value = '';
+            if (qtyEl) {
+                qtyEl.value = '1';
+                qtyEl.max = '999';
+            }
+            bindOrderRowEvents(clone);
+            itemsContainer.appendChild(clone);
+            recalculateOrderTotal();
+        });
+    }
+
+    // Auto-fill customer phone & address when customer is chosen
+    if (userSelect) {
+        userSelect.addEventListener('change', () => {
+            const opt = userSelect.options[userSelect.selectedIndex];
+            if (!opt || !opt.value) return;
+            const phone = opt.dataset.phone || '';
+            const address = opt.dataset.address || '';
+            if (phoneInput && phone) phoneInput.value = phone;
+            if (addressInput && address) addressInput.value = address;
+        });
+    }
+
+    // Open modal and reset form
+    if (openBtn) {
+        openBtn.addEventListener('click', () => {
+            const form = document.getElementById('addOrderForm');
+            if (form) form.reset();
+
+            // Keep only 1 row when opening fresh
+            const allRows = itemsContainer.querySelectorAll('.order-item-row');
+            allRows.forEach((r, idx) => {
+                if (idx > 0) {
+                    r.remove();
+                } else {
+                    const sel = r.querySelector('.js-order-book-select');
+                    const qty = r.querySelector('.js-order-qty-input');
+                    if (sel) sel.value = '';
+                    if (qty) qty.value = '1';
+                }
+            });
+
+            recalculateOrderTotal();
+            openModal(modal);
+        });
+    }
+}
+
+/* 4B. Order Edit Modal */
 function initOrderModal() {
     const modal = document.getElementById('orderModal');
     if (!modal) return;

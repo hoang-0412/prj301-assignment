@@ -4,12 +4,15 @@ import dal.BookDAO;
 import dal.BookImagesDAO;
 import dal.CategoryDAO;
 import dal.OrderDAO;
+import dal.OrderItemDAO;
 import dal.RoleDAO;
 import dal.UserDAO;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.sql.Date;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.Vector;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.MultipartConfig;
@@ -22,6 +25,7 @@ import jakarta.servlet.http.Part;
 import model.Book;
 import model.Category;
 import model.Order;
+import model.OrderItem;
 import model.Role;
 import model.User;
 
@@ -37,6 +41,7 @@ public class AdminDashboardController extends HttpServlet {
     private final BookImagesDAO bookImagesDAO = new BookImagesDAO();
     private final CategoryDAO categoryDAO = new CategoryDAO();
     private final OrderDAO orderDAO = new OrderDAO();
+    private final OrderItemDAO orderItemDAO = new OrderItemDAO();
     private final UserDAO userDAO = new UserDAO();
     private final RoleDAO roleDAO = new RoleDAO();
 
@@ -145,6 +150,7 @@ public class AdminDashboardController extends HttpServlet {
         // Đặt thuộc tính sang JSP
         request.setAttribute("activeTab", activeTab);
         request.setAttribute("books", filteredBooks);
+        request.setAttribute("allBooksList", allBooks);
         request.setAttribute("allBooksCount", totalBooksCount);
         request.setAttribute("totalStockCount", totalStockCount);
         request.setAttribute("booksForSaleCount", booksForSaleCount);
@@ -210,6 +216,10 @@ public class AdminDashboardController extends HttpServlet {
                 case "deleteCategory":
                     handleDeleteCategory(request, session);
                     redirectTab = "categories";
+                    break;
+                case "addOrder":
+                    handleAddOrder(request, session);
+                    redirectTab = "orders";
                     break;
                 case "updateOrder":
                     handleUpdateOrder(request, session);
@@ -443,6 +453,115 @@ public class AdminDashboardController extends HttpServlet {
     }
 
     // ==================== ORDER HANDLERS ====================
+
+    private void handleAddOrder(HttpServletRequest request, HttpSession session) {
+        int userId = parseIntOrDefault(request.getParameter("userId"), 0);
+        User customer = userDAO.searchUser(userId);
+        if (customer == null) {
+            session.setAttribute("adminErrorMsg", "Vui lòng chọn khách hàng hợp lệ để tạo đơn hàng!");
+            return;
+        }
+
+        String recipientPhone = trimParam(request.getParameter("recipientPhone"));
+        String shippingAddress = trimParam(request.getParameter("shippingAddress"));
+        String paymentMethod = trimParam(request.getParameter("paymentMethod"));
+        String paymentStatus = trimParam(request.getParameter("paymentStatus"));
+        String orderStatus = trimParam(request.getParameter("orderStatus"));
+
+        if (recipientPhone.isEmpty()) {
+            recipientPhone = customer.getPhoneNumber() != null ? customer.getPhoneNumber() : "";
+        }
+        if (shippingAddress.isEmpty()) {
+            shippingAddress = customer.getAddress() != null ? customer.getAddress() : "";
+        }
+        if (recipientPhone.isEmpty() || shippingAddress.isEmpty()) {
+            session.setAttribute("adminErrorMsg", "Vui lòng nhập đầy đủ số điện thoại và địa chỉ giao hàng!");
+            return;
+        }
+        if (paymentMethod.isEmpty()) {
+            paymentMethod = "COD";
+        }
+        if (paymentStatus.isEmpty()) {
+            paymentStatus = "Unpaid";
+        }
+        if (orderStatus.isEmpty()) {
+            orderStatus = "Pending";
+        }
+
+        String[] bookIdParams = request.getParameterValues("orderBookId");
+        String[] qtyParams = request.getParameterValues("orderQuantity");
+
+        if (bookIdParams == null || qtyParams == null || bookIdParams.length == 0) {
+            session.setAttribute("adminErrorMsg", "Vui lòng chọn ít nhất 1 cuốn sách cho đơn hàng!");
+            return;
+        }
+
+        // Gộp số lượng nếu chọn trùng cùng 1 đầu sách ở nhiều dòng
+        Map<Integer, Integer> bookQtyMap = new LinkedHashMap<>();
+        int len = Math.min(bookIdParams.length, qtyParams.length);
+        for (int i = 0; i < len; i++) {
+            int bId = parseIntOrDefault(bookIdParams[i], 0);
+            int qty = parseIntOrDefault(qtyParams[i], 0);
+            if (bId > 0 && qty > 0) {
+                bookQtyMap.put(bId, bookQtyMap.getOrDefault(bId, 0) + qty);
+            }
+        }
+
+        if (bookQtyMap.isEmpty()) {
+            session.setAttribute("adminErrorMsg", "Danh sách sản phẩm trong đơn hàng không hợp lệ!");
+            return;
+        }
+
+        // Kiểm tra tồn kho và tính tổng tiền
+        Map<Integer, Book> bookMap = new LinkedHashMap<>();
+        double totalAmount = 0;
+        for (Map.Entry<Integer, Integer> entry : bookQtyMap.entrySet()) {
+            int bId = entry.getKey();
+            int qty = entry.getValue();
+            Book book = bookDAO.searchBook(bId);
+            if (book == null) {
+                session.setAttribute("adminErrorMsg", "Không tìm thấy sách #" + bId + " trong kho!");
+                return;
+            }
+            if (book.getStockQuantity() < qty) {
+                session.setAttribute("adminErrorMsg", "Sách \"" + book.getTitle() + "\" chỉ còn " + book.getStockQuantity() + " cuốn trong kho (yêu cầu " + qty + " cuốn)!");
+                return;
+            }
+            bookMap.put(bId, book);
+            totalAmount += book.getPrice() * qty;
+        }
+
+        Order newOrder = new Order(
+                userId,
+                totalAmount,
+                orderStatus,
+                shippingAddress,
+                recipientPhone,
+                paymentMethod,
+                paymentStatus,
+                new Date(System.currentTimeMillis())
+        );
+
+        int n = orderDAO.insertOrder(newOrder);
+        if (n > 0 && newOrder.getOrderId() > 0) {
+            int orderId = newOrder.getOrderId();
+            for (Map.Entry<Integer, Integer> entry : bookQtyMap.entrySet()) {
+                int bId = entry.getKey();
+                int qty = entry.getValue();
+                Book book = bookMap.get(bId);
+
+                OrderItem item = new OrderItem(0, orderId, bId, qty, book.getPrice());
+                orderItemDAO.insertOrderItem(item);
+
+                // Trừ tồn kho
+                book.setStockQuantity(Math.max(0, book.getStockQuantity() - qty));
+                bookDAO.updateBook(book);
+            }
+            session.setAttribute("adminSuccessMsg", "Đã tạo chủ động đơn hàng #" + orderId + " cho khách hàng \"" + customer.getFullName() + "\" thành công!");
+        } else {
+            session.setAttribute("adminErrorMsg", "Không thể tạo đơn hàng mới vào cơ sở dữ liệu!");
+        }
+    }
 
     private void handleUpdateOrder(HttpServletRequest request, HttpSession session) {
         int orderId = parseIntOrDefault(request.getParameter("orderId"), 0);

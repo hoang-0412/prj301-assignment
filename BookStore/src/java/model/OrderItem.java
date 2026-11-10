@@ -63,6 +63,16 @@ public class OrderItem {
         this.unitPrice = unitPrice;
     }
 
+    private String bookTitle;
+
+    public String getBookTitle() {
+        return bookTitle;
+    }
+
+    public void setBookTitle(String bookTitle) {
+        this.bookTitle = bookTitle;
+    }
+
     @Override
     public String toString() {
         return "OrderItem{" + "orderItemId=" + orderItemId + ", orderId=" + orderId + ", bookId=" + bookId + ", quantity=" + quantity + ", unitPrice=" + unitPrice + '}';
