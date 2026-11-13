@@ -32,13 +32,13 @@
             <c:if test="${not empty successMsg}">
                 <div class="cart-alert success">
                     <span>✓ ${fn:escapeXml(successMsg)}</span>
-                    <button type="button" onclick="this.parentElement.remove()">✕</button>
+                    <button type="button" class="js-cart-alert-close">✕</button>
                 </div>
             </c:if>
             <c:if test="${not empty errorMsg}">
                 <div class="cart-alert error">
                     <span>⚠ ${fn:escapeXml(errorMsg)}</span>
-                    <button type="button" onclick="this.parentElement.remove()">✕</button>
+                    <button type="button" class="js-cart-alert-close">✕</button>
                 </div>
             </c:if>
 
@@ -49,7 +49,7 @@
                         <div class="cart-items-panel">
                             <div class="cart-panel-header">
                                 <h3>Sản Phẩm Trong Giỏ (${cartCount} cuốn)</h3>
-                                <form action="${pageContext.request.contextPath}/cart" method="POST" onsubmit="return confirm('Bạn muốn xóa toàn bộ sản phẩm trong giỏ hàng?');">
+                                <form action="${pageContext.request.contextPath}/cart" method="POST" id="clearCartForm">
                                     <input type="hidden" name="action" value="clear">
                                     <button type="submit" class="btn-clear-cart">Xóa tất cả</button>
                                 </form>
@@ -200,11 +200,11 @@
                         <h2>Giỏ hàng của bạn đang trống</h2>
                         <p>Hãy khám phá kho sách phong phú của Tiệm sách Hoàng Trịnh và thêm những cuốn sách yêu thích vào giỏ nhé!</p>
                         <div class="cart-empty-actions">
-                            <a href="${pageContext.request.contextPath}/home" class="btn-checkout-submit" style="display:inline-flex; width:auto; padding: 12px 28px;">
+                            <a href="${pageContext.request.contextPath}/home" class="btn-checkout-submit btn-explore-books">
                                 Khám Phá Kho Sách Ngay
                             </a>
                             <c:if test="${not empty sessionScope.user}">
-                                <a href="${pageContext.request.contextPath}/my-orders" class="btn-continue-shopping" style="padding: 12px 22px;">
+                                <a href="${pageContext.request.contextPath}/my-orders" class="btn-continue-shopping btn-view-orders">
                                     Xem Đơn Mua Của Tôi →
                                 </a>
                             </c:if>
@@ -219,6 +219,7 @@
 
         <script src="${pageContext.request.contextPath}/components/header/header.js"></script>
         <script src="${pageContext.request.contextPath}/components/footer/footer.js"></script>
+        <script src="${pageContext.request.contextPath}/js/cart.js"></script>
     </body>
 </html>
 

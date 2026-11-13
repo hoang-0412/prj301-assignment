@@ -192,7 +192,7 @@
                     <h3>Giới Thiệu Nội Dung Sách</h3>
                     <div class="bd-desc-content">
                         <p>${not empty book.description ? fn:escapeXml(book.description) : 'Chưa có bài giới thiệu chi tiết cho cuốn sách này.'}</p>
-                        <p style="margin-top:14px; color:#64748b;">
+                        <p class="bd-desc-meta-note">
                             Ấn phẩm <strong>${fn:escapeXml(book.title)}</strong> của tác giả <strong>${fn:escapeXml(book.author)}</strong> (xuất bản năm ${book.publicationYear} bởi ${fn:escapeXml(book.publisher)}) thuộc danh mục <em>${fn:escapeXml(book.categoryName)}</em>, hiện đang được phân phối trực tiếp tại hệ thống Tiệm sách Hoàng Trịnh.
                         </p>
                     </div>
@@ -227,7 +227,7 @@
                                 </div>
                                 <div class="card-body">
                                     <h3 class="card-title" title="${fn:escapeXml(rb.title)}">
-                                        <a href="${pageContext.request.contextPath}/book-detail?id=${rb.bookId}" style="color:inherit; text-decoration:none;">
+                                        <a href="${pageContext.request.contextPath}/book-detail?id=${rb.bookId}">
                                             ${fn:escapeXml(rb.title)}
                                         </a>
                                     </h3>
@@ -236,7 +236,7 @@
                                         <div class="price-box">
                                             <span class="current-price">${rb.formattedPrice}</span>
                                         </div>
-                                        <a href="${pageContext.request.contextPath}/book-detail?id=${rb.bookId}" class="btn-add-cart-mini" title="Xem chi tiết" style="text-decoration:none;">
+                                        <a href="${pageContext.request.contextPath}/book-detail?id=${rb.bookId}" class="btn-add-cart-mini" title="Xem chi tiết">
                                             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M5 12h14"/><path d="M12 5l7 7-7 7"/></svg>
                                         </a>
                                     </div>
@@ -256,71 +256,7 @@
 
         <script src="${pageContext.request.contextPath}/components/header/header.js"></script>
         <script src="${pageContext.request.contextPath}/components/footer/footer.js"></script>
-        <script>
-            document.addEventListener('DOMContentLoaded', () => {
-                const qtyInput = document.getElementById('bdQtyInput');
-                const minusBtn = document.getElementById('bdQtyMinus');
-                const plusBtn = document.getElementById('bdQtyPlus');
-                const addAjaxBtn = document.getElementById('bdAddToCartAjaxBtn');
-
-                if (qtyInput && minusBtn && plusBtn) {
-                    const maxStock = parseInt(qtyInput.max, 10) || 99;
-                    minusBtn.addEventListener('click', () => {
-                        let v = parseInt(qtyInput.value, 10) || 1;
-                        if (v > 1) qtyInput.value = v - 1;
-                    });
-                    plusBtn.addEventListener('click', () => {
-                        let v = parseInt(qtyInput.value, 10) || 1;
-                        if (v < maxStock) qtyInput.value = v + 1;
-                    });
-                }
-
-                if (addAjaxBtn) {
-                    addAjaxBtn.addEventListener('click', () => {
-                        const bookId = addAjaxBtn.dataset.id;
-                        const ctx = addAjaxBtn.dataset.context || '';
-                        const qty = qtyInput ? (parseInt(qtyInput.value, 10) || 1) : 1;
-
-                        const params = new URLSearchParams();
-                        params.append('action', 'add');
-                        params.append('bookId', bookId);
-                        params.append('quantity', String(qty));
-                        params.append('ajax', 'true');
-
-                        fetch(ctx + '/cart', {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
-                                'X-Requested-With': 'XMLHttpRequest'
-                            },
-                            body: params.toString()
-                        })
-                        .then(res => res.json())
-                        .then(data => {
-                            const badge = document.getElementById('navCartBadge');
-                            if (badge && typeof data.cartCount === 'number') {
-                                badge.textContent = data.cartCount;
-                                badge.style.display = data.cartCount > 0 ? 'flex' : 'none';
-                            }
-                            showDetailToast(data.success ? 'Đã thêm vào giỏ hàng!' : 'Thông báo', data.message || '');
-                        });
-                    });
-                }
-
-                function showDetailToast(title, message) {
-                    const container = document.getElementById('toastContainer');
-                    if (!container) return;
-                    const toast = document.createElement('div');
-                    toast.className = 'toast show';
-                    toast.innerHTML = '<div class="toast-icon">✓</div><div class="toast-msg"><h6>' + title + '</h6><p>' + message + '</p></div>';
-                    container.appendChild(toast);
-                    setTimeout(() => {
-                        toast.classList.remove('show');
-                        setTimeout(() => toast.remove(), 300);
-                    }, 3000);
-                }
-            });
-        </script>
+        <script src="${pageContext.request.contextPath}/js/bookdetail.js"></script>
     </body>
 </html>
 

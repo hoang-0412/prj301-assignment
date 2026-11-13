@@ -828,6 +828,75 @@ body {
     background: var(--adm-white);
 }
 
+.cover-upload-info {
+    flex: 1;
+}
+
+.cover-upload-input {
+    width: 100%;
+}
+
+.cover-upload-hint {
+    color: #64748b;
+    display: block;
+    margin-top: 4px;
+}
+
+.adm-label-hint {
+    color: #64748b;
+    font-weight: 400;
+}
+
+.cell-sub-muted {
+    color: #64748b;
+}
+
+.cell-sub-id {
+    font-size: 12px;
+    color: #64748b;
+}
+
+.cell-empty-muted {
+    font-size: 12px;
+    color: #94a3b8;
+}
+
+.order-id-link {
+    color: #4f46e5;
+    text-decoration: none;
+}
+
+.order-id-link:hover {
+    text-decoration: underline;
+}
+
+.btn-outline {
+    background: #ffffff;
+    color: #334155;
+    border: 1px solid #cbd5e1;
+    text-decoration: none;
+}
+
+.btn-outline:hover {
+    background: #f1f5f9;
+    color: #0f172a;
+}
+
+.delete-confirm-desc {
+    font-size: 14.5px;
+    color: #334155;
+    margin-bottom: 8px;
+}
+
+.delete-confirm-box {
+    padding: 12px 14px;
+    background: #fef2f2;
+    border: 1px solid #fecaca;
+    border-radius: 8px;
+    color: #991b1b;
+    font-weight: 700;
+}
+
 .adm-modal-footer {
     padding: 16px 24px;
     background: var(--adm-gray-50);

@@ -195,6 +195,10 @@
     box-shadow: var(--hdr-shadow-sm);
 }
 
+.cart-badge.is-hidden {
+    display: none;
+}
+
 /* ==========================================================
    5. SEARCH POPUP MODAL OVERLAY
    ========================================================== */
@@ -733,6 +737,7 @@
 
 /* Feedback Messages */
 .auth-feedback {
+    display: none;
     padding: 10px 14px;
     border-radius: 10px;
     font-size: 13px;
@@ -743,21 +748,70 @@
 }
 
 .auth-feedback.error {
+    display: block;
     background: #fef2f2;
     color: #dc2626;
     border: 1px solid #fecaca;
 }
 
 .auth-feedback.success {
+    display: block;
     background: #f0fdf4;
     color: #16a34a;
     border: 1px solid #bbf7d0;
 }
 
 .auth-feedback.info {
+    display: block;
     background: #eff6ff;
     color: #2563eb;
     border: 1px solid #bfdbfe;
+}
+
+#authStep2Panel,
+#authStepRegisterPanel,
+#authStepForgotPanel,
+.auth-step-hidden {
+    display: none;
+}
+
+.eye-icon-hide {
+    display: none;
+}
+
+.auth-form-group-spaced {
+    margin-top: 14px;
+}
+
+.auth-register-prompt {
+    text-align: center;
+    margin-top: 14px;
+    font-size: 13px;
+    color: #64748b;
+}
+
+.auth-register-link {
+    color: #4f46e5;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.auth-register-link:hover {
+    text-decoration: underline;
+}
+
+.auth-back-wrap {
+    text-align: center;
+    margin-top: 14px;
+}
+
+.auth-btn-back-forgot {
+    background: #334155;
+    margin-top: 18px;
+}
+
+.auth-btn-back-forgot:hover {
+    background: #1e293b;
 }
 
 @keyframes authFadeIn {

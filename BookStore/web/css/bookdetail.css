@@ -389,6 +389,11 @@
     line-height: 1.75;
 }
 
+.bd-desc-meta-note {
+    margin-top: 14px;
+    color: #64748b;
+}
+
 .bd-related-section {
     margin-top: 20px;
 }

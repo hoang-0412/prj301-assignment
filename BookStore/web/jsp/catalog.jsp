@@ -178,7 +178,7 @@
                                     </div>
                                     <div class="card-body">
                                         <h3 class="card-title" title="${fn:escapeXml(b.title)}">
-                                            <a href="${pageContext.request.contextPath}/book-detail?id=${b.bookId}" style="color:inherit; text-decoration:none;">
+                                            <a href="${pageContext.request.contextPath}/book-detail?id=${b.bookId}">
                                                 ${fn:escapeXml(b.title)}
                                             </a>
                                         </h3>
@@ -191,7 +191,7 @@
                                             <div class="price-box">
                                                 <span class="current-price">${b.formattedPrice}</span>
                                             </div>
-                                            <div style="display:flex; gap:6px;">
+                                            <div class="cat-card-actions">
                                                 <button type="button" class="btn-add-cart-mini js-cat-add-cart"
                                                         data-id="${b.bookId}"
                                                         data-title="${fn:escapeXml(b.title)}"
@@ -207,7 +207,7 @@
 
                         <!-- Pagination -->
                         <c:if test="${totalPages > 1}">
-                            <nav class="pagination-wrap" style="margin-top:32px;">
+                            <nav class="pagination-wrap cat-pagination">
                                 <c:forEach begin="1" end="${totalPages}" var="p">
                                     <a href="${pageContext.request.contextPath}/catalog?page=${p}&sort=${selectedSort}&status=${fn:escapeXml(selectedStatus)}&categoryId=${selectedCategoryId}&keyword=${fn:escapeXml(keyword)}&minPrice=${minPrice}&maxPrice=${maxPrice}&inStock=${inStockOnly}"
                                        class="page-btn ${p == currentPage ? 'active' : ''}">
@@ -222,7 +222,7 @@
                         <div class="empty-state">
                             <h3>Không tìm thấy cuốn sách nào khớp với bộ lọc</h3>
                             <p>Hãy thử nới rộng khoảng giá hoặc đặt lại các tiêu chí tìm kiếm.</p>
-                            <a href="${pageContext.request.contextPath}/catalog" class="btn-primary" style="display:inline-flex; margin-top:12px;">
+                            <a href="${pageContext.request.contextPath}/catalog" class="btn-primary cat-empty-btn">
                                 Xem Tất Cả Sách
                             </a>
                         </div>
@@ -238,56 +238,7 @@
 
         <script src="${pageContext.request.contextPath}/components/header/header.js"></script>
         <script src="${pageContext.request.contextPath}/components/footer/footer.js"></script>
-        <script>
-            document.addEventListener('DOMContentLoaded', () => {
-                const ctx = document.body.dataset.contextPath || '';
-                const minInput = document.getElementById('catMinPrice');
-                const maxInput = document.getElementById('catMaxPrice');
-
-                document.querySelectorAll('.cat-preset-btn').forEach(btn => {
-                    btn.addEventListener('click', () => {
-                        if (minInput) minInput.value = btn.dataset.min || '';
-                        if (maxInput) maxInput.value = btn.dataset.max || '';
-                    });
-                });
-
-                document.querySelectorAll('.js-cat-add-cart').forEach(btn => {
-                    btn.addEventListener('click', () => {
-                        const bookId = btn.dataset.id;
-                        const params = new URLSearchParams();
-                        params.append('action', 'add');
-                        params.append('bookId', bookId);
-                        params.append('quantity', '1');
-                        params.append('ajax', 'true');
-
-                        fetch(ctx + '/cart', {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
-                                'X-Requested-With': 'XMLHttpRequest'
-                            },
-                            body: params.toString()
-                        })
-                        .then(r => r.json())
-                        .then(data => {
-                            const badge = document.getElementById('navCartBadge');
-                            if (badge && typeof data.cartCount === 'number') {
-                                badge.textContent = data.cartCount;
-                                badge.style.display = data.cartCount > 0 ? 'flex' : 'none';
-                            }
-                            const container = document.getElementById('toastContainer');
-                            if (container) {
-                                const t = document.createElement('div');
-                                t.className = 'toast show';
-                                t.innerHTML = '<div class="toast-icon">✓</div><div class="toast-msg"><h6>Giỏ hàng</h6><p>' + (data.message || '') + '</p></div>';
-                                container.appendChild(t);
-                                setTimeout(() => t.remove(), 3000);
-                            }
-                        });
-                    });
-                });
-            });
-        </script>
+        <script src="${pageContext.request.contextPath}/js/catalog.js"></script>
     </body>
 </html>
 

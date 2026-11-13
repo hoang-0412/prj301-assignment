@@ -38,7 +38,7 @@
                     <circle cx="20" cy="21" r="1"></circle>
                     <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
                 </svg>
-                <span class="cart-badge" id="navCartBadge" style="${effectiveCartCount > 0 ? '' : 'display:none;'}">
+                <span class="cart-badge ${effectiveCartCount > 0 ? '' : 'is-hidden'}" id="navCartBadge">
                     ${effectiveCartCount}
                 </span>
             </a>
@@ -154,9 +154,9 @@
             <h3 class="auth-title" id="authModalTitle">Đăng nhập</h3>
             <p class="auth-subtitle">Nhập số điện thoại hoặc email hoặc đăng ký tài khoản mới</p>
 
-            <div class="auth-feedback" id="authFeedback1" style="display: none;"></div>
+            <div class="auth-feedback" id="authFeedback1"></div>
 
-            <form id="authStep1Form" onsubmit="return false;">
+            <form id="authStep1Form">
                 <div class="auth-form-group">
                     <input type="text" id="authIdentifierInput" class="auth-input" 
                            placeholder="Nhập số điện thoại hoặc email" 
@@ -171,13 +171,13 @@
                     </svg>
                 </button>
             </form>
-            <div style="text-align: center; margin-top: 14px; font-size: 13px; color: #64748b;">
-                Hoặc <a href="${pageContext.request.contextPath}/register" style="color: #4f46e5; font-weight: 700; text-decoration: none;">Đăng ký tài khoản đầy đủ →</a>
+            <div class="auth-register-prompt">
+                Hoặc <a href="${pageContext.request.contextPath}/register" class="auth-register-link">Đăng ký tài khoản đầy đủ →</a>
             </div>
         </div>
 
         <!-- ================= BƯỚC 2: NHẬP MẬT KHẨU ================= -->
-        <div class="auth-step-panel" id="authStep2Panel" style="display: none;">
+        <div class="auth-step-panel" id="authStep2Panel">
             <h3 class="auth-title">Đăng nhập</h3>
 
             <!-- Thẻ hiển thị tài khoản vừa nhập kèm nút đổi -->
@@ -186,9 +186,9 @@
                 <button type="button" class="auth-badge-change" id="authBackToStep1Btn">Thay đổi</button>
             </div>
 
-            <div class="auth-feedback" id="authFeedback2" style="display: none;"></div>
+            <div class="auth-feedback" id="authFeedback2"></div>
 
-            <form id="authStep2Form" onsubmit="return false;">
+            <form id="authStep2Form">
                 <div class="auth-form-group">
                     <label class="auth-label" for="authPasswordInput">Nhập mật khẩu</label>
                     <div class="auth-input-wrapper">
@@ -200,14 +200,14 @@
                                 <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
                                 <circle cx="12" cy="12" r="3"></circle>
                             </svg>
-                            <svg class="eye-icon-hide" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: none;">
+                            <svg class="eye-icon-hide" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
                                 <line x1="1" y1="1" x2="23" y2="23"></line>
                             </svg>
                         </button>
                     </div>
                     <div class="auth-link-row">
-                        <a href="javascript:void(0)" class="auth-forgot-link" id="authForgotLink">Quên mật khẩu?</a>
+                        <a href="#" class="auth-forgot-link" id="authForgotLink">Quên mật khẩu?</a>
                     </div>
                 </div>
 
@@ -222,20 +222,20 @@
         </div>
 
         <!-- ================= BƯỚC 3: ĐĂNG KÝ TÀI KHOẢN MỚI ================= -->
-        <div class="auth-step-panel" id="authStepRegisterPanel" style="display: none;">
+        <div class="auth-step-panel" id="authStepRegisterPanel">
             <h3 class="auth-title">Đăng ký tài khoản</h3>
             <p class="auth-subtitle">Tài khoản chưa tồn tại. Tạo mật khẩu để bắt đầu mua sắm</p>
 
-            <div class="auth-feedback" id="authFeedbackRegister" style="display: none;"></div>
+            <div class="auth-feedback" id="authFeedbackRegister"></div>
 
-            <form id="authRegisterForm" onsubmit="return false;">
+            <form id="authRegisterForm">
                 <div class="auth-form-group">
                     <label class="auth-label" for="authRegisterFullName">Họ và tên</label>
                     <input type="text" id="authRegisterFullName" class="auth-input" 
                            placeholder="Nhập họ và tên của bạn" required>
                 </div>
 
-                <div class="auth-form-group" style="margin-top: 14px;">
+                <div class="auth-form-group auth-form-group-spaced">
                     <label class="auth-label" for="authRegisterPassword">Tạo mật khẩu</label>
                     <div class="auth-input-wrapper">
                         <input type="password" id="authRegisterPassword" class="auth-input" 
@@ -245,7 +245,7 @@
                                 <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
                                 <circle cx="12" cy="12" r="3"></circle>
                             </svg>
-                            <svg class="eye-icon-hide" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: none;">
+                            <svg class="eye-icon-hide" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
                                 <line x1="1" y1="1" x2="23" y2="23"></line>
                             </svg>
@@ -262,13 +262,13 @@
                 </button>
             </form>
 
-            <div style="text-align: center; margin-top: 14px;">
+            <div class="auth-back-wrap">
                 <button type="button" class="auth-link-back" id="authCancelRegisterBtn">← Sử dụng tài khoản khác</button>
             </div>
         </div>
 
         <!-- ================= BƯỚC 4: QUÊN MẬT KHẨU ================= -->
-        <div class="auth-step-panel" id="authStepForgotPanel" style="display: none;">
+        <div class="auth-step-panel" id="authStepForgotPanel">
             <h3 class="auth-title">Quên mật khẩu?</h3>
             <p class="auth-subtitle">Để bảo mật thông tin tài khoản, vui lòng liên hệ trực tiếp để được xác minh và cấp lại mật khẩu:</p>
             
@@ -283,7 +283,7 @@
                 </div>
             </div>
 
-            <button type="button" class="auth-btn-primary" id="authBackFromForgotBtn" style="background: #334155; margin-top: 18px;">
+            <button type="button" class="auth-btn-primary auth-btn-back-forgot" id="authBackFromForgotBtn">
                 <span>← Quay lại đăng nhập</span>
             </button>
         </div>

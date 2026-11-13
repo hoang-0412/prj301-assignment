@@ -60,13 +60,13 @@
             <c:if test="${not empty successMsg}">
                 <div class="prf-alert success">
                     <span>✓ ${fn:escapeXml(successMsg)}</span>
-                    <button type="button" onclick="this.parentElement.remove()">✕</button>
+                    <button type="button" class="js-prf-alert-close">✕</button>
                 </div>
             </c:if>
             <c:if test="${not empty errorMsg}">
                 <div class="prf-alert error">
                     <span>⚠ ${fn:escapeXml(errorMsg)}</span>
-                    <button type="button" onclick="this.parentElement.remove()">✕</button>
+                    <button type="button" class="js-prf-alert-close">✕</button>
                 </div>
             </c:if>
 
@@ -167,7 +167,7 @@
                                             <div class="prf-order-top">
                                                 <div class="prf-order-id-group">
                                                     <strong>
-                                                        <a href="${pageContext.request.contextPath}/order-detail?id=${o.orderId}" style="color:inherit; text-decoration:none;">
+                                                        <a href="${pageContext.request.contextPath}/order-detail?id=${o.orderId}" class="prf-order-link">
                                                             Đơn hàng #${o.orderId}
                                                         </a>
                                                     </strong>
@@ -218,12 +218,12 @@
                                                 <div class="prf-order-total-wrap">
                                                     <span class="prf-total-lbl">Tổng tiền: <strong>${o.formattedTotalAmount}</strong></span>
                                                     <a href="${pageContext.request.contextPath}/order-detail?id=${o.orderId}"
-                                                       style="padding:7px 14px; border-radius:8px; border:1px solid #cbd5e1; background:#ffffff; color:#1e293b; font-size:12.5px; font-weight:700; text-decoration:none;">
+                                                       class="prf-btn-detail">
                                                         Xem Chi Tiết / Hóa Đơn
                                                     </a>
                                                     <c:if test="${o.orderStatus == 'Pending'}">
                                                         <form action="${pageContext.request.contextPath}/profile" method="POST"
-                                                              onsubmit="return confirm('Bạn có chắc chắn muốn hủy đơn hàng #${o.orderId}?');">
+                                                              class="js-prf-cancel-order" data-order-id="${o.orderId}">
                                                             <input type="hidden" name="action" value="cancelOrder">
                                                             <input type="hidden" name="orderId" value="${o.orderId}">
                                                             <button type="submit" class="prf-btn-cancel">Hủy Đơn Hàng</button>
@@ -238,7 +238,7 @@
                             <c:otherwise>
                                 <div class="prf-empty-orders">
                                     <p>Bạn chưa có đơn đặt hàng nào.</p>
-                                    <a href="${pageContext.request.contextPath}/home" class="prf-btn-primary" style="display:inline-flex; text-decoration:none; margin-top:12px;">
+                                    <a href="${pageContext.request.contextPath}/home" class="prf-btn-primary prf-btn-shop-now">
                                         Mua Sắm Ngay
                                     </a>
                                 </div>
@@ -253,22 +253,22 @@
                             <p>Cập nhật mật khẩu định kỳ để bảo vệ tài khoản của bạn</p>
                         </div>
 
-                        <form action="${pageContext.request.contextPath}/profile" method="POST" class="prf-form" style="max-width:520px;">
+                        <form action="${pageContext.request.contextPath}/profile" method="POST" class="prf-form prf-form-narrow">
                             <input type="hidden" name="action" value="changePassword">
 
-                            <div class="prf-field" style="margin-bottom:16px;">
+                            <div class="prf-field prf-field-spaced">
                                 <label for="prfCurrentPwd">Mật khẩu hiện tại <span class="req">*</span></label>
                                 <input type="password" name="currentPassword" id="prfCurrentPwd" class="prf-input"
                                        placeholder="Nhập mật khẩu đang sử dụng..." required>
                             </div>
 
-                            <div class="prf-field" style="margin-bottom:16px;">
+                            <div class="prf-field prf-field-spaced">
                                 <label for="prfNewPwd">Mật khẩu mới (Tối thiểu 6 ký tự) <span class="req">*</span></label>
                                 <input type="password" name="newPassword" id="prfNewPwd" class="prf-input"
                                        placeholder="Nhập mật khẩu mới..." minlength="6" required>
                             </div>
 
-                            <div class="prf-field" style="margin-bottom:20px;">
+                            <div class="prf-field prf-field-spaced-lg">
                                 <label for="prfConfirmPwd">Xác nhận mật khẩu mới <span class="req">*</span></label>
                                 <input type="password" name="confirmPassword" id="prfConfirmPwd" class="prf-input"
                                        placeholder="Nhập lại mật khẩu mới..." minlength="6" required>
@@ -289,32 +289,7 @@
 
         <script src="${pageContext.request.contextPath}/components/header/header.js"></script>
         <script src="${pageContext.request.contextPath}/components/footer/footer.js"></script>
-        <script>
-            document.addEventListener('DOMContentLoaded', () => {
-                const navBtns = document.querySelectorAll('.prf-nav-btn[data-tab]');
-                const panels = document.querySelectorAll('.prf-panel');
-
-                navBtns.forEach(btn => {
-                    btn.addEventListener('click', () => {
-                        const tab = btn.dataset.tab;
-                        navBtns.forEach(b => b.classList.remove('active'));
-                        btn.classList.add('active');
-
-                        panels.forEach(p => {
-                            if (p.id === 'prf-panel-' + tab) {
-                                p.classList.add('active');
-                            } else {
-                                p.classList.remove('active');
-                            }
-                        });
-
-                        const url = new URL(window.location.href);
-                        url.searchParams.set('tab', tab);
-                        window.history.replaceState({}, '', url.toString());
-                    });
-                });
-            });
-        </script>
+        <script src="${pageContext.request.contextPath}/js/profile.js"></script>
     </body>
 </html>
 

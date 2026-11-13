@@ -289,6 +289,20 @@
     color: #d97706;
 }
 
+.cat-card-actions {
+    display: flex;
+    gap: 6px;
+}
+
+.cat-pagination {
+    margin-top: 32px;
+}
+
+.cat-empty-btn {
+    display: inline-flex;
+    margin-top: 12px;
+}
+
 @media (max-width: 1024px) {
     .cat-main-layout {
         grid-template-columns: 1fr;

@@ -385,6 +385,14 @@
     color: #e11d48;
 }
 
+.od-text-right {
+    text-align: right;
+}
+
+.od-free-ship {
+    color: #059669;
+}
+
 /* Summary Footer */
 .od-summary-footer {
     display: flex;

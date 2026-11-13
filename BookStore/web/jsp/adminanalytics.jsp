@@ -36,7 +36,7 @@
                         <a href="${pageContext.request.contextPath}/admindashboard" class="btn-hero-action btn-hero-outline">
                             ← Quay Lại Bảng Quản Trị
                         </a>
-                        <button type="button" class="btn-hero-action btn-hero-primary" onclick="window.print()">
+                        <button type="button" class="btn-hero-action btn-hero-primary" id="btnPrintAnalytics">
                             🖨 Xuất Báo Cáo
                         </button>
                     </div>
@@ -125,7 +125,7 @@
                                     </div>
                                 </div>
                                 <div class="ana-progress-track">
-                                    <div class="ana-progress-fill" style="width: ${cs.stockPercent > 5 ? cs.stockPercent : 5}%;"></div>
+                                    <div class="ana-progress-fill" data-width="${cs.stockPercent > 5 ? cs.stockPercent : 5}"></div>
                                 </div>
                             </div>
                         </c:forEach>
@@ -148,7 +148,7 @@
                         </c:forEach>
                     </div>
 
-                    <div class="ana-card-head" style="margin-top:24px;">
+                    <div class="ana-card-head ana-card-head-spaced">
                         <h3>Phương Thức Thanh Toán</h3>
                         <p>Phân bổ theo hình thức thanh toán của khách hàng</p>
                     </div>
@@ -160,7 +160,7 @@
                             </div>
                         </c:forEach>
                         <c:if test="${empty paymentMethodCounts}">
-                            <p style="font-size:13px; color:#64748b;">Chưa có dữ liệu thanh toán.</p>
+                            <p class="ana-empty-note">Chưa có dữ liệu thanh toán.</p>
                         </c:if>
                     </div>
                 </section>
@@ -191,12 +191,12 @@
                                     <tr>
                                         <td><span class="ana-rank-badge">#${st.index + 1}</span></td>
                                         <td>
-                                            <div class="book-cell-info" style="min-width:200px;">
+                                            <div class="book-cell-info ana-book-cell-compact">
                                                 <img src="${pageContext.request.contextPath}/book-image?bookId=${b.bookId}"
                                                      alt="${fn:escapeXml(b.title)}" class="book-thumb">
                                                 <div class="book-cell-text">
                                                     <h4>
-                                                        <a href="${pageContext.request.contextPath}/book-detail?id=${b.bookId}" style="color:inherit; text-decoration:none;">
+                                                        <a href="${pageContext.request.contextPath}/book-detail?id=${b.bookId}" class="ana-book-link">
                                                             ${fn:escapeXml(b.title)}
                                                         </a>
                                                     </h4>
@@ -215,7 +215,7 @@
                 </section>
 
                 <!-- Low Stock Books & VIP Customers -->
-                <div style="display:flex; flex-direction:column; gap:24px;">
+                <div class="ana-stack-col">
                     <section class="ana-card">
                         <div class="ana-card-head">
                             <h3>Cảnh Báo Sách Sắp Hết Hàng (Tồn ≤ 15)</h3>
@@ -249,7 +249,7 @@
                                         </c:when>
                                         <c:otherwise>
                                             <tr>
-                                                <td colspan="4" style="text-align:center; color:#64748b;">Tất cả đầu sách đều có tồn kho dồi dào (&gt; 15 cuốn).</td>
+                                                <td colspan="4" class="ana-empty-cell">Tất cả đầu sách đều có tồn kho dồi dào (&gt; 15 cuốn).</td>
                                             </tr>
                                         </c:otherwise>
                                     </c:choose>
@@ -280,7 +280,7 @@
                                             <td><strong>${fn:escapeXml(u.fullName)}</strong></td>
                                             <td>
                                                 <div>${fn:escapeXml(u.email)}</div>
-                                                <small style="color:#64748b;">${fn:escapeXml(u.phoneNumber)}</small>
+                                                <small class="ana-text-muted">${fn:escapeXml(u.phoneNumber)}</small>
                                             </td>
                                             <td><strong>${tc.orderCount} đơn</strong></td>
                                             <td><span class="price-text">${tc.formattedSpent}</span></td>
@@ -300,6 +300,7 @@
 
         <script src="${pageContext.request.contextPath}/components/header/header.js"></script>
         <script src="${pageContext.request.contextPath}/components/footer/footer.js"></script>
+        <script src="${pageContext.request.contextPath}/js/adminanalytics.js"></script>
     </body>
 </html>
 

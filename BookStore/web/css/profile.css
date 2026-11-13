@@ -489,6 +489,49 @@
     color: #64748b;
 }
 
+.prf-order-link {
+    color: inherit;
+    text-decoration: none;
+}
+
+.prf-order-link:hover {
+    color: #4f46e5;
+}
+
+.prf-btn-detail {
+    padding: 7px 14px;
+    border-radius: 8px;
+    border: 1px solid #cbd5e1;
+    background: #ffffff;
+    color: #1e293b;
+    font-size: 12.5px;
+    font-weight: 700;
+    text-decoration: none;
+    transition: background 0.2s;
+}
+
+.prf-btn-detail:hover {
+    background: #f1f5f9;
+}
+
+.prf-btn-shop-now {
+    display: inline-flex;
+    text-decoration: none;
+    margin-top: 12px;
+}
+
+.prf-form-narrow {
+    max-width: 520px;
+}
+
+.prf-field-spaced {
+    margin-bottom: 16px;
+}
+
+.prf-field-spaced-lg {
+    margin-bottom: 20px;
+}
+
 @media (max-width: 900px) {
     .prf-grid {
         grid-template-columns: 1fr;

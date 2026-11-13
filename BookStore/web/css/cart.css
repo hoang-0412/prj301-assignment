@@ -423,6 +423,16 @@
     flex-wrap: wrap;
 }
 
+.btn-explore-books {
+    display: inline-flex;
+    width: auto;
+    padding: 12px 28px;
+}
+
+.btn-view-orders {
+    padding: 12px 22px;
+}
+
 @media (max-width: 960px) {
     .cart-layout-grid {
         grid-template-columns: 1fr;

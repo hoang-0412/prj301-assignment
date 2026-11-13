@@ -542,6 +542,25 @@ img {
     color: #34d399;
 }
 
+.spotlight-desc {
+    font-size: 12px;
+    color: #cbd5e1;
+    margin-top: 8px;
+}
+
+.featured-section {
+    margin-bottom: 48px;
+}
+
+.clear-filter-link {
+    color: var(--primary);
+    font-weight: 600;
+}
+
+.clear-filter-link:hover {
+    text-decoration: underline;
+}
+
 /* ==========================================================
    TRUST BADGES
    ========================================================== */
@@ -1349,7 +1368,31 @@ img {
 .modal-actions {
     display: flex;
     align-items: center;
-    gap: 16px;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.modal-cat-badge {
+    display: inline-block;
+    margin-bottom: 8px;
+}
+
+.modal-add-cart-btn {
+    padding: 10px 24px;
+}
+
+.modal-detail-link {
+    padding: 10px 18px;
+    text-decoration: none;
+    color: #334155;
+    border: 1px solid #cbd5e1;
+    border-radius: 10px;
+    font-weight: 600;
+}
+
+.modal-detail-link:hover {
+    background: var(--gray-100);
+    color: var(--dark-900);
 }
 
 .quantity-control {
