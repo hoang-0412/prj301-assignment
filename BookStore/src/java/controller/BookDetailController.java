@@ -27,12 +27,22 @@ public class BookDetailController extends HttpServlet {
     private final CartDAO cartDAO = new CartDAO();
     private final CartItemDAO cartItemDAO = new CartItemDAO();
 
-    @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+    protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
         request.setCharacterEncoding("UTF-8");
         response.setCharacterEncoding("UTF-8");
+
+        String service = request.getParameter("service");
+        if (service == null || service.trim().isEmpty()) {
+            service = request.getParameter("action");
+        }
+        if (service == null || service.trim().isEmpty()) {
+            service = "viewDetail";
+        }
+        service = service.trim();
+
+        if ("viewDetail".equals(service)) {
 
         String idParam = request.getParameter("id");
         if (idParam == null || idParam.trim().isEmpty()) {
@@ -82,6 +92,19 @@ public class BookDetailController extends HttpServlet {
         request.setAttribute("cartCount", cartCount);
 
         request.getRequestDispatcher("/jsp/bookdetail.jsp").forward(request, response);
+        }
+    }
+
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        processRequest(request, response);
+    }
+
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        processRequest(request, response);
     }
 
     private int computeCartCount(HttpSession session) {

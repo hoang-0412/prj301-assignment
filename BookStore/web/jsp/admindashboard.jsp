@@ -115,13 +115,13 @@
             <c:if test="${not empty successMsg}">
                 <div class="admin-alert success">
                     <span>✓ ${fn:escapeXml(successMsg)}</span>
-                    <button type="button" class="admin-alert-close" onclick="this.parentElement.remove()">✕</button>
+                    <button type="button" class="admin-alert-close">✕</button>
                 </div>
             </c:if>
             <c:if test="${not empty errorMsg}">
                 <div class="admin-alert error">
                     <span>⚠ ${fn:escapeXml(errorMsg)}</span>
-                    <button type="button" class="admin-alert-close" onclick="this.parentElement.remove()">✕</button>
+                    <button type="button" class="admin-alert-close">✕</button>
                 </div>
             </c:if>
 
@@ -241,7 +241,7 @@
                                             <td>${fn:escapeXml(b.categoryName)}</td>
                                             <td>
                                                 <div>${fn:escapeXml(b.publisher)}</div>
-                                                <small style="color:#64748b;">Năm: ${b.publicationYear}</small>
+                                                <small class="cell-sub-muted">Năm: ${b.publicationYear}</small>
                                             </td>
                                             <td><code>${fn:escapeXml(b.isbn)}</code></td>
                                             <td><span class="price-text">${b.formattedPrice}</span></td>
@@ -423,14 +423,14 @@
                                         <tr class="data-row">
                                             <td>
                                                 <strong>
-                                                    <a href="${pageContext.request.contextPath}/order-detail?id=${o.orderId}" style="color:#4f46e5; text-decoration:none;">
+                                                    <a href="${pageContext.request.contextPath}/order-detail?id=${o.orderId}" class="order-id-link">
                                                         #${o.orderId}
                                                     </a>
                                                 </strong>
                                             </td>
                                             <td>
                                                 <strong>${not empty o.customerName ? fn:escapeXml(o.customerName) : 'User #' += o.userId}</strong>
-                                                <div style="font-size:12px; color:#64748b;">ID: #${o.userId}</div>
+                                                <div class="cell-sub-id">ID: #${o.userId}</div>
                                             </td>
                                             <td>
                                                 <c:choose>
@@ -445,7 +445,7 @@
                                                         </div>
                                                     </c:when>
                                                     <c:otherwise>
-                                                        <span style="font-size:12px; color:#94a3b8;">Chưa có chi tiết</span>
+                                                        <span class="cell-empty-muted">Chưa có chi tiết</span>
                                                     </c:otherwise>
                                                 </c:choose>
                                             </td>
@@ -467,7 +467,7 @@
                                             <td>
                                                 <div class="action-cell">
                                                     <a href="${pageContext.request.contextPath}/order-detail?id=${o.orderId}"
-                                                       class="btn-admin btn-icon-sm btn-outline" style="text-decoration:none;">
+                                                       class="btn-admin btn-icon-sm btn-outline">
                                                         Chi tiết
                                                     </a>
                                                     <button type="button" class="btn-admin btn-icon-sm btn-edit js-edit-order"
@@ -656,9 +656,9 @@
                                 <label for="bookCoverFile">Ảnh bìa sách (Tùy chọn tải ảnh mới)</label>
                                 <div class="cover-upload-box">
                                     <img src="${pageContext.request.contextPath}/book-image?bookId=1" alt="Preview" id="bookCoverPreview" class="cover-preview-img">
-                                    <div style="flex:1;">
-                                        <input type="file" name="coverFile" id="bookCoverFile" accept="image/*" class="adm-input" style="width:100%;">
-                                        <small style="color:#64748b; display:block; margin-top:4px;">Hỗ trợ JPG, PNG, WEBP. Lưu trực tiếp vào bảng BookImages.</small>
+                                    <div class="cover-upload-info">
+                                        <input type="file" name="coverFile" id="bookCoverFile" accept="image/*" class="adm-input cover-upload-input">
+                                        <small class="cover-upload-hint">Hỗ trợ JPG, PNG, WEBP. Lưu trực tiếp vào bảng BookImages.</small>
                                     </div>
                                 </div>
                             </div>
@@ -901,7 +901,7 @@
                                 <input type="text" name="phoneNumber" id="userPhoneInput" class="adm-input" placeholder="09xxxxxxxx">
                             </div>
                             <div class="adm-form-group full-width">
-                                <label for="userPasswordInput">Mật khẩu <small id="userPwdHint" style="color:#64748b; font-weight:400;">(Bắt buộc)</small></label>
+                                <label for="userPasswordInput">Mật khẩu <small id="userPwdHint" class="adm-label-hint">(Bắt buộc)</small></label>
                                 <input type="password" name="password" id="userPasswordInput" class="adm-input" placeholder="Nhập mật khẩu...">
                             </div>
                             <div class="adm-form-group full-width">
@@ -931,10 +931,10 @@
                     <input type="hidden" name="action" id="deleteActionInput" value="">
                     <input type="hidden" name="id" id="deleteIdInput" value="">
                     <div class="adm-modal-body">
-                        <p style="font-size:14.5px; color:#334155; margin-bottom:8px;">
+                        <p class="delete-confirm-desc">
                             Bạn có chắc chắn muốn xóa mục sau khỏi cơ sở dữ liệu?
                         </p>
-                        <div style="padding:12px 14px; background:#fef2f2; border:1px solid #fecaca; border-radius:8px; color:#991b1b; font-weight:700;" id="deleteConfirmText">
+                        <div class="delete-confirm-box" id="deleteConfirmText">
                             ...
                         </div>
                     </div>

@@ -9,7 +9,18 @@ document.addEventListener('DOMContentLoaded', () => {
     initQuickViewModal();
     initAddToCart();
     initQuantityControls();
+    initNewsletterForm();
 });
+
+function initNewsletterForm() {
+    const newsletterForm = document.getElementById('newsletterForm');
+    if (!newsletterForm) return;
+    newsletterForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        showToast('Đăng ký thành công!', 'Cảm ơn bạn đã đăng ký nhận bản tin!');
+        newsletterForm.reset();
+    });
+}
 
 /* Search Box functionality */
 function initSearchBox() {
@@ -154,6 +165,7 @@ function initAddToCart() {
         .then(data => {
             if (cartBadge && typeof data.cartCount === 'number') {
                 cartBadge.textContent = data.cartCount;
+                cartBadge.classList.toggle('is-hidden', data.cartCount <= 0);
                 cartBadge.style.display = data.cartCount > 0 ? 'flex' : 'none';
                 cartBadge.animate([
                     { transform: 'scale(1)' },

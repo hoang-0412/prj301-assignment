@@ -19,9 +19,19 @@ public class BookImageServlet extends HttpServlet {
     private final BookImagesDAO bookImagesDAO = new BookImagesDAO();
     private final BookDAO bookDAO = new BookDAO();
 
-    @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+    protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+
+        String service = request.getParameter("service");
+        if (service == null || service.trim().isEmpty()) {
+            service = request.getParameter("action");
+        }
+        if (service == null || service.trim().isEmpty()) {
+            service = "viewImage";
+        }
+        service = service.trim();
+
+        if ("viewImage".equals(service)) {
 
         String bookIdParam = request.getParameter("bookId");
         String imageIdParam = request.getParameter("id");
@@ -77,6 +87,19 @@ public class BookImageServlet extends HttpServlet {
             os.write(svgBytes);
             os.flush();
         }
+        }
+    }
+
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        processRequest(request, response);
+    }
+
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        processRequest(request, response);
     }
 
     private String generateSvgCover(Book book, int bookId) {

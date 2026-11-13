@@ -139,6 +139,8 @@
     border: 1px solid #e2e8f0;
     padding: 12px;
     box-shadow: 0 4px 14px -4px rgba(15, 23, 42, 0.05);
+    position: sticky;
+    top: 92px;
 }
 
 .prf-nav {
@@ -311,6 +313,12 @@
     border-radius: 14px;
     overflow: hidden;
     background: #ffffff;
+    transition: box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.prf-order-card:hover {
+    border-color: #cbd5e1;
+    box-shadow: 0 8px 20px -6px rgba(15, 23, 42, 0.07);
 }
 
 .prf-order-top {
@@ -489,9 +497,55 @@
     color: #64748b;
 }
 
+.prf-order-link {
+    color: inherit;
+    text-decoration: none;
+}
+
+.prf-order-link:hover {
+    color: #4f46e5;
+}
+
+.prf-btn-detail {
+    padding: 7px 14px;
+    border-radius: 8px;
+    border: 1px solid #cbd5e1;
+    background: #ffffff;
+    color: #1e293b;
+    font-size: 12.5px;
+    font-weight: 700;
+    text-decoration: none;
+    transition: background 0.2s;
+}
+
+.prf-btn-detail:hover {
+    background: #f1f5f9;
+}
+
+.prf-btn-shop-now {
+    display: inline-flex;
+    text-decoration: none;
+    margin-top: 12px;
+}
+
+.prf-form-narrow {
+    max-width: 520px;
+}
+
+.prf-field-spaced {
+    margin-bottom: 16px;
+}
+
+.prf-field-spaced-lg {
+    margin-bottom: 20px;
+}
+
 @media (max-width: 900px) {
     .prf-grid {
         grid-template-columns: 1fr;
+    }
+    .prf-sidebar {
+        position: static;
     }
     .prf-form-grid {
         grid-template-columns: 1fr;

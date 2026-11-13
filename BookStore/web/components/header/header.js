@@ -8,6 +8,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initHeaderSearch();
     initHeaderScrollEffect();
     initHeaderActiveNav();
+    initUserDropdownToggle();
     initAuthModal();
 });
 
@@ -109,34 +110,62 @@ function initHeaderScrollEffect() {
     handleScroll();
 }
 
-/* Highlight current active nav item based on URL or hash */
+/* Highlight current active nav item based on URL path, query, or hash */
 function initHeaderActiveNav() {
-    const navLinks = document.querySelectorAll('.nav-task-links .nav-link, .nav-sub-menu .nav-link');
+    const navLinks = document.querySelectorAll('.nav-task-links .nav-link');
     if (!navLinks || navLinks.length === 0) return;
 
-    const currentHash = window.location.hash;
+    function updateActiveNav() {
+        const path = window.location.pathname;
+        const search = decodeURIComponent(window.location.search || '');
+        const hash = window.location.hash;
 
-    navLinks.forEach(link => {
-        const href = link.getAttribute('href');
-        if (!href) return;
+        navLinks.forEach(l => l.classList.remove('active'));
 
-        // If URL has hash and link matches hash
-        if (currentHash && href.includes(currentHash)) {
-            navLinks.forEach(l => l.classList.remove('active'));
-            link.classList.add('active');
+        let activeKey = null;
+        if (path.endsWith('/catalog')) {
+            if (search.includes('Cho thuê') || search.includes('Cho+thuê')) {
+                activeKey = 'rent';
+            } else {
+                activeKey = 'catalog';
+            }
+        } else if (path.endsWith('/home') || path.endsWith('/homepage') || path.endsWith('/BookStore/')) {
+            if (hash === '#featured') {
+                activeKey = 'featured';
+            } else if (hash === '#newsletter') {
+                activeKey = 'newsletter';
+            } else {
+                activeKey = 'home';
+            }
         }
+
+        if (activeKey) {
+            const target = document.querySelector('.nav-task-links .nav-link[data-nav="' + activeKey + '"]');
+            if (target) target.classList.add('active');
+        }
+    }
+
+    updateActiveNav();
+    window.addEventListener('hashchange', updateActiveNav);
+}
+
+/* Toggle user profile dropdown on click and close when clicking outside */
+function initUserDropdownToggle() {
+    const userWrap = document.getElementById('headerUserWrap');
+    const userBtn = document.getElementById('userProfileBtn');
+    if (!userWrap || !userBtn) return;
+
+    userBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const isActive = userWrap.classList.toggle('active');
+        userBtn.setAttribute('aria-expanded', isActive ? 'true' : 'false');
     });
 
-    // Update active on hashchange
-    window.addEventListener('hashchange', () => {
-        const hash = window.location.hash;
-        navLinks.forEach(link => {
-            const href = link.getAttribute('href');
-            if (href && href.endsWith(hash)) {
-                navLinks.forEach(l => l.classList.remove('active'));
-                link.classList.add('active');
-            }
-        });
+    document.addEventListener('click', (e) => {
+        if (!userWrap.contains(e.target)) {
+            userWrap.classList.remove('active');
+            userBtn.setAttribute('aria-expanded', 'false');
+        }
     });
 }
 

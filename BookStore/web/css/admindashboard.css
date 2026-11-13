@@ -162,7 +162,7 @@ body {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     gap: 18px;
-    margin-top: -22px;
+    margin-top: 24px;
     margin-bottom: 24px;
 }
 
@@ -298,13 +298,17 @@ body {
     align-items: center;
     justify-content: space-between;
     gap: 16px;
-    background: var(--adm-white);
+    background: rgba(255, 255, 255, 0.96);
+    backdrop-filter: blur(10px);
     padding: 8px 10px;
     border-radius: var(--adm-radius-lg);
     box-shadow: var(--adm-shadow-sm);
     border: 1px solid var(--adm-gray-200);
     margin-bottom: 20px;
     flex-wrap: wrap;
+    position: sticky;
+    top: 82px;
+    z-index: 90;
 }
 
 .admin-tabs-list {
@@ -826,6 +830,75 @@ body {
     object-fit: cover;
     border: 1px solid var(--adm-gray-200);
     background: var(--adm-white);
+}
+
+.cover-upload-info {
+    flex: 1;
+}
+
+.cover-upload-input {
+    width: 100%;
+}
+
+.cover-upload-hint {
+    color: #64748b;
+    display: block;
+    margin-top: 4px;
+}
+
+.adm-label-hint {
+    color: #64748b;
+    font-weight: 400;
+}
+
+.cell-sub-muted {
+    color: #64748b;
+}
+
+.cell-sub-id {
+    font-size: 12px;
+    color: #64748b;
+}
+
+.cell-empty-muted {
+    font-size: 12px;
+    color: #94a3b8;
+}
+
+.order-id-link {
+    color: #4f46e5;
+    text-decoration: none;
+}
+
+.order-id-link:hover {
+    text-decoration: underline;
+}
+
+.btn-outline {
+    background: #ffffff;
+    color: #334155;
+    border: 1px solid #cbd5e1;
+    text-decoration: none;
+}
+
+.btn-outline:hover {
+    background: #f1f5f9;
+    color: #0f172a;
+}
+
+.delete-confirm-desc {
+    font-size: 14.5px;
+    color: #334155;
+    margin-bottom: 8px;
+}
+
+.delete-confirm-box {
+    padding: 12px 14px;
+    background: #fef2f2;
+    border: 1px solid #fecaca;
+    border-radius: 8px;
+    color: #991b1b;
+    font-weight: 700;
 }
 
 .adm-modal-footer {

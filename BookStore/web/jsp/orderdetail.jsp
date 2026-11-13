@@ -40,7 +40,7 @@
                 </div>
 
                 <div class="od-right-actions">
-                    <button type="button" class="od-btn od-btn-print" onclick="window.print()">
+                    <button type="button" class="od-btn od-btn-print" id="btnPrintInvoice">
                         <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
                         <span>In Hóa Đơn / Xuất PDF</span>
                     </button>
@@ -51,13 +51,13 @@
             <c:if test="${not empty successMsg}">
                 <div class="od-alert success no-print">
                     <span>✓ ${fn:escapeXml(successMsg)}</span>
-                    <button type="button" onclick="this.parentElement.remove()">✕</button>
+                    <button type="button" class="js-od-alert-close">✕</button>
                 </div>
             </c:if>
             <c:if test="${not empty errorMsg}">
                 <div class="od-alert error no-print">
                     <span>⚠ ${fn:escapeXml(errorMsg)}</span>
-                    <button type="button" onclick="this.parentElement.remove()">✕</button>
+                    <button type="button" class="js-od-alert-close">✕</button>
                 </div>
             </c:if>
 
@@ -186,7 +186,7 @@
                                     <th>Mã ISBN / NXB</th>
                                     <th>Đơn Giá</th>
                                     <th>Số Lượng</th>
-                                    <th style="text-align:right;">Thành Tiền</th>
+                                    <th class="od-text-right">Thành Tiền</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -219,7 +219,7 @@
                                         </td>
                                         <td>${item.formattedUnitPrice}</td>
                                         <td><strong>x${item.quantity}</strong></td>
-                                        <td style="text-align:right;"><strong class="od-price">${item.formattedSubtotal}</strong></td>
+                                        <td class="od-text-right"><strong class="od-price">${item.formattedSubtotal}</strong></td>
                                     </tr>
                                 </c:forEach>
                             </tbody>
@@ -240,7 +240,7 @@
                         </div>
                         <div class="od-total-line">
                             <span>Phí vận chuyển:</span>
-                            <strong style="color:#059669;">Miễn phí (0 đ)</strong>
+                            <strong class="od-free-ship">Miễn phí (0 đ)</strong>
                         </div>
                         <div class="od-total-line grand">
                             <span>Tổng cộng thanh toán:</span>
@@ -274,7 +274,7 @@
 
                     <c:if test="${sessionScope.user.userId == order.userId and order.orderStatus == 'Pending'}">
                         <form action="${pageContext.request.contextPath}/order-detail" method="POST"
-                              onsubmit="return confirm('Bạn có chắc chắn muốn hủy đơn hàng #${order.orderId}?');">
+                              class="js-cancel-order-form" data-order-id="${order.orderId}">
                             <input type="hidden" name="action" value="customerCancel">
                             <input type="hidden" name="orderId" value="${order.orderId}">
                             <button type="submit" class="od-btn od-btn-danger">Hủy Đơn Hàng Này</button>
@@ -292,6 +292,7 @@
 
         <script src="${pageContext.request.contextPath}/components/header/header.js"></script>
         <script src="${pageContext.request.contextPath}/components/footer/footer.js"></script>
+        <script src="${pageContext.request.contextPath}/js/orderdetail.js"></script>
     </body>
 </html>
 

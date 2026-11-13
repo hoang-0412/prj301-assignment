@@ -155,6 +155,9 @@
                             • Từ khóa: <span class="cat-active-tag">"${fn:escapeXml(keyword)}"</span>
                         </c:if>
                     </div>
+                    <c:if test="${not empty selectedStatus or not empty keyword or not empty selectedCategoryId or not empty minPrice or not empty maxPrice or inStockOnly}">
+                        <a href="${pageContext.request.contextPath}/catalog" class="cat-toolbar-reset">✕ Xóa bộ lọc</a>
+                    </c:if>
                 </div>
 
                 <c:choose>
@@ -167,36 +170,42 @@
                                     <div class="card-image-wrap">
                                         <div class="card-badges">
                                             <span class="badge-cat">${fn:escapeXml(b.categoryName)}</span>
-                                            <span class="cat-book-status ${b.bookStatus == 'Bán' ? 'sale' : (b.bookStatus == 'Cho thuê' ? 'rent' : 'rented')}">
-                                                ${fn:escapeXml(b.bookStatus)}
-                                            </span>
+                                            <c:if test="${not empty b.bookStatus}">
+                                                <span class="badge-status ${b.bookStatus == 'Bán' ? 'sale' : (b.bookStatus == 'Cho thuê' ? 'rent' : 'rented')}">
+                                                    ${fn:escapeXml(b.bookStatus)}
+                                                </span>
+                                            </c:if>
                                         </div>
-                                        <a href="${pageContext.request.contextPath}/book-detail?id=${b.bookId}">
+                                        <a href="${pageContext.request.contextPath}/book-detail?id=${b.bookId}" class="card-image-link" aria-label="${fn:escapeXml(b.title)}">
                                             <img src="${pageContext.request.contextPath}/book-image?bookId=${b.bookId}"
                                                  alt="${fn:escapeXml(b.title)}" loading="lazy">
                                         </a>
                                     </div>
                                     <div class="card-body">
                                         <h3 class="card-title" title="${fn:escapeXml(b.title)}">
-                                            <a href="${pageContext.request.contextPath}/book-detail?id=${b.bookId}" style="color:inherit; text-decoration:none;">
+                                            <a href="${pageContext.request.contextPath}/book-detail?id=${b.bookId}">
                                                 ${fn:escapeXml(b.title)}
                                             </a>
                                         </h3>
                                         <p class="card-author">Tác giả: <strong>${fn:escapeXml(b.author)}</strong></p>
-                                        <div class="card-rating">
-                                            <span>Kho: <strong>${b.stockQuantity} cuốn</strong></span>
-                                            <span class="review-count">• NXB ${fn:escapeXml(b.publisher)}</span>
+                                        <div class="card-meta-row">
+                                            <span class="meta-stock ${b.stockQuantity > 0 ? 'in-stock' : 'out-stock'}">
+                                                ${b.stockQuantity > 0 ? ('Kho: ' += b.stockQuantity += ' cuốn') : 'Tạm hết hàng'}
+                                            </span>
+                                            <span class="meta-dot">•</span>
+                                            <span class="meta-pub">NXB ${fn:escapeXml(b.publisher)}</span>
                                         </div>
                                         <div class="card-footer-price">
                                             <div class="price-box">
                                                 <span class="current-price">${b.formattedPrice}</span>
                                             </div>
-                                            <div style="display:flex; gap:6px;">
+                                            <div class="cat-card-actions">
                                                 <button type="button" class="btn-add-cart-mini js-cat-add-cart"
                                                         data-id="${b.bookId}"
                                                         data-title="${fn:escapeXml(b.title)}"
-                                                        title="Thêm vào giỏ">
-                                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+                                                        title="Thêm vào giỏ hàng">
+                                                    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+                                                    <span>Thêm</span>
                                                 </button>
                                             </div>
                                         </div>
@@ -207,7 +216,7 @@
 
                         <!-- Pagination -->
                         <c:if test="${totalPages > 1}">
-                            <nav class="pagination-wrap" style="margin-top:32px;">
+                            <nav class="pagination-wrap cat-pagination">
                                 <c:forEach begin="1" end="${totalPages}" var="p">
                                     <a href="${pageContext.request.contextPath}/catalog?page=${p}&sort=${selectedSort}&status=${fn:escapeXml(selectedStatus)}&categoryId=${selectedCategoryId}&keyword=${fn:escapeXml(keyword)}&minPrice=${minPrice}&maxPrice=${maxPrice}&inStock=${inStockOnly}"
                                        class="page-btn ${p == currentPage ? 'active' : ''}">
@@ -222,7 +231,7 @@
                         <div class="empty-state">
                             <h3>Không tìm thấy cuốn sách nào khớp với bộ lọc</h3>
                             <p>Hãy thử nới rộng khoảng giá hoặc đặt lại các tiêu chí tìm kiếm.</p>
-                            <a href="${pageContext.request.contextPath}/catalog" class="btn-primary" style="display:inline-flex; margin-top:12px;">
+                            <a href="${pageContext.request.contextPath}/catalog" class="btn-primary cat-empty-btn">
                                 Xem Tất Cả Sách
                             </a>
                         </div>
@@ -238,56 +247,7 @@
 
         <script src="${pageContext.request.contextPath}/components/header/header.js"></script>
         <script src="${pageContext.request.contextPath}/components/footer/footer.js"></script>
-        <script>
-            document.addEventListener('DOMContentLoaded', () => {
-                const ctx = document.body.dataset.contextPath || '';
-                const minInput = document.getElementById('catMinPrice');
-                const maxInput = document.getElementById('catMaxPrice');
-
-                document.querySelectorAll('.cat-preset-btn').forEach(btn => {
-                    btn.addEventListener('click', () => {
-                        if (minInput) minInput.value = btn.dataset.min || '';
-                        if (maxInput) maxInput.value = btn.dataset.max || '';
-                    });
-                });
-
-                document.querySelectorAll('.js-cat-add-cart').forEach(btn => {
-                    btn.addEventListener('click', () => {
-                        const bookId = btn.dataset.id;
-                        const params = new URLSearchParams();
-                        params.append('action', 'add');
-                        params.append('bookId', bookId);
-                        params.append('quantity', '1');
-                        params.append('ajax', 'true');
-
-                        fetch(ctx + '/cart', {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
-                                'X-Requested-With': 'XMLHttpRequest'
-                            },
-                            body: params.toString()
-                        })
-                        .then(r => r.json())
-                        .then(data => {
-                            const badge = document.getElementById('navCartBadge');
-                            if (badge && typeof data.cartCount === 'number') {
-                                badge.textContent = data.cartCount;
-                                badge.style.display = data.cartCount > 0 ? 'flex' : 'none';
-                            }
-                            const container = document.getElementById('toastContainer');
-                            if (container) {
-                                const t = document.createElement('div');
-                                t.className = 'toast show';
-                                t.innerHTML = '<div class="toast-icon">✓</div><div class="toast-msg"><h6>Giỏ hàng</h6><p>' + (data.message || '') + '</p></div>';
-                                container.appendChild(t);
-                                setTimeout(() => t.remove(), 3000);
-                            }
-                        });
-                    });
-                });
-            });
-        </script>
+        <script src="${pageContext.request.contextPath}/js/catalog.js"></script>
     </body>
 </html>
 

@@ -12,25 +12,28 @@ public class OrderItemDAO extends DBContext {
 
     private static final Logger LOGGER = Logger.getLogger(OrderItemDAO.class.getName());
 
-    public Vector<OrderItem> getAllOrderItem() {
+    public Vector<OrderItem> getAllOrderItem(String sql) {
         Vector<OrderItem> vector = new Vector<>();
-        String sql = "SELECT orderItemId, orderId, bookId, quantity, unitPrice FROM OrderItem";
         try (PreparedStatement ptm = connection.prepareStatement(sql);
-             ResultSet rs = ptm.executeQuery()) {
+                ResultSet rs = ptm.executeQuery()) {
             while (rs.next()) {
                 OrderItem oi = new OrderItem(
                         rs.getInt(1),
                         rs.getInt(2),
                         rs.getInt(3),
                         rs.getInt(4),
-                        rs.getDouble(5)
-                );
+                        rs.getDouble(5));
                 vector.add(oi);
             }
         } catch (SQLException ex) {
             LOGGER.log(Level.SEVERE, "Lỗi khi lấy danh sách chi tiết đơn hàng", ex);
         }
         return vector;
+    }
+
+    public Vector<OrderItem> getAllOrderItem() {
+        String sql = "SELECT orderItemId, orderId, bookId, quantity, unitPrice FROM OrderItem";
+        return getAllOrderItem(sql);
     }
 
     public OrderItem searchOrderItem(int orderItemId) {
@@ -44,8 +47,7 @@ public class OrderItemDAO extends DBContext {
                             rs.getInt(2),
                             rs.getInt(3),
                             rs.getInt(4),
-                            rs.getDouble(5)
-                    );
+                            rs.getDouble(5));
                 }
             }
         } catch (SQLException ex) {
@@ -69,8 +71,7 @@ public class OrderItemDAO extends DBContext {
                             rs.getInt(2),
                             rs.getInt(3),
                             rs.getInt(4),
-                            rs.getDouble(5)
-                    );
+                            rs.getDouble(5));
                     oi.setBookTitle(rs.getString(6));
                     vector.add(oi);
                 }

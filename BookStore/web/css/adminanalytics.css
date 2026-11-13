@@ -89,8 +89,47 @@
 
 .ana-progress-fill {
     height: 100%;
+    width: 0;
     background: linear-gradient(90deg, #4f46e5, #0ea5e9);
     border-radius: 999px;
+    transition: width 0.35s ease;
+}
+
+.ana-card-head-spaced {
+    margin-top: 24px;
+}
+
+.ana-empty-note {
+    font-size: 13px;
+    color: #64748b;
+}
+
+.ana-book-cell-compact {
+    min-width: 200px;
+}
+
+.ana-book-link {
+    color: inherit;
+    text-decoration: none;
+}
+
+.ana-book-link:hover {
+    color: #4f46e5;
+}
+
+.ana-stack-col {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.ana-empty-cell {
+    text-align: center;
+    color: #64748b;
+}
+
+.ana-text-muted {
+    color: #64748b;
 }
 
 .ana-status-list {

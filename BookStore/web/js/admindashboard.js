@@ -13,7 +13,17 @@ document.addEventListener('DOMContentLoaded', () => {
     initDeleteModal();
     initModalClosers();
     initQuickTableSearch();
+    initAlertClosers();
 });
+
+function initAlertClosers() {
+    document.querySelectorAll('.admin-alert-close').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const alertBox = btn.closest('.admin-alert');
+            if (alertBox) alertBox.remove();
+        });
+    });
+}
 
 /* 1. Tab switching */
 function initAdminTabs() {

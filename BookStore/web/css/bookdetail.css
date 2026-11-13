@@ -135,8 +135,8 @@
 }
 
 .bd-price-panel {
-    background: linear-gradient(135deg, #fff1f2 0%, #ffe4e6 100%);
-    border: 1px solid #fecdd3;
+    background: linear-gradient(135deg, #f8fafc 0%, #eef2ff 100%);
+    border: 1px solid #c7d2fe;
     border-radius: 14px;
     padding: 18px 22px;
     display: flex;
@@ -149,7 +149,7 @@
 .bd-price-main {
     font-size: 30px;
     font-weight: 800;
-    color: #e11d48;
+    color: #4f46e5;
 }
 
 .bd-stock-badge {
@@ -387,6 +387,11 @@
     font-size: 15px;
     color: #334155;
     line-height: 1.75;
+}
+
+.bd-desc-meta-note {
+    margin-top: 14px;
+    color: #64748b;
 }
 
 .bd-related-section {

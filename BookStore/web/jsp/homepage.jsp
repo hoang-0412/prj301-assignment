@@ -75,7 +75,7 @@
                                 </div>
                                 <div class="spotlight-info">
                                     <h3>
-                                        <a href="${pageContext.request.contextPath}/book-detail?id=${spotlightBook.bookId}" style="color:inherit; text-decoration:none;">
+                                        <a href="${pageContext.request.contextPath}/book-detail?id=${spotlightBook.bookId}">
                                             ${spotlightBook.title}
                                         </a>
                                     </h3>
@@ -84,7 +84,7 @@
                                         <span>Đánh giá: 5.0 (320+ lượt mua)</span>
                                     </div>
                                     <div class="spotlight-price">${spotlightBook.formattedPrice}</div>
-                                    <p style="font-size:12px; color:#cbd5e1; margin-top:8px;">
+                                    <p class="spotlight-desc">
                                         ${fn:substring(spotlightBook.description, 0, 85)}...
                                     </p>
                                 </div>
@@ -119,7 +119,7 @@
 
         <!-- 6. FEATURED BOOKS SHOWCASE -->
         <c:if test="${empty keyword and (empty selectedCategoryId or selectedCategoryId == 0)}">
-            <section class="container" id="featured" style="margin-bottom: 48px;">
+            <section class="container featured-section" id="featured">
                 <div class="section-header">
                     <div class="section-title-wrap">
                         <h2>
@@ -146,35 +146,46 @@
                                  data-image="${pageContext.request.contextPath}/book-image?bookId=${b.bookId}">
                             <div class="card-image-wrap">
                                 <div class="card-badges">
-                                    <span class="badge-cat">${b.categoryName}</span>
+                                    <span class="badge-cat">${fn:escapeXml(b.categoryName)}</span>
+                                    <c:if test="${not empty b.bookStatus}">
+                                        <span class="badge-status ${b.bookStatus == 'Bán' ? 'sale' : (b.bookStatus == 'Cho thuê' ? 'rent' : 'rented')}">
+                                            ${fn:escapeXml(b.bookStatus)}
+                                        </span>
+                                    </c:if>
                                 </div>
-                                <img src="${pageContext.request.contextPath}/book-image?bookId=${b.bookId}" alt="${fn:escapeXml(b.title)}" loading="lazy">
+                                <a href="${pageContext.request.contextPath}/book-detail?id=${b.bookId}" class="card-image-link" aria-label="${fn:escapeXml(b.title)}">
+                                    <img src="${pageContext.request.contextPath}/book-image?bookId=${b.bookId}" alt="${fn:escapeXml(b.title)}" loading="lazy">
+                                </a>
                                 <div class="card-quick-actions">
                                     <button type="button" class="action-btn-quick btn-quick-view" aria-label="Xem nhanh">
                                         <span>Xem Nhanh</span>
                                     </button>
-                                    <a href="${pageContext.request.contextPath}/book-detail?id=${b.bookId}" class="action-btn-quick" style="text-decoration:none;">
+                                    <a href="${pageContext.request.contextPath}/book-detail?id=${b.bookId}" class="action-btn-quick">
                                         <span>Chi Tiết</span>
                                     </a>
                                 </div>
                             </div>
                             <div class="card-body">
                                 <h3 class="card-title" title="${fn:escapeXml(b.title)}">
-                                    <a href="${pageContext.request.contextPath}/book-detail?id=${b.bookId}" style="color:inherit; text-decoration:none;">${b.title}</a>
+                                    <a href="${pageContext.request.contextPath}/book-detail?id=${b.bookId}">${fn:escapeXml(b.title)}</a>
                                 </h3>
                                 <p class="card-author">
-                                    Tác giả: <strong>${b.author}</strong>
+                                    Tác giả: <strong>${fn:escapeXml(b.author)}</strong>
                                 </p>
-                                <div class="card-rating">
-                                    <span>Đánh giá: 5.0</span>
-                                    <span class="review-count">(${b.stockQuantity + 45} lượt mua)</span>
+                                <div class="card-meta-row">
+                                    <span class="meta-stock ${b.stockQuantity > 0 ? 'in-stock' : 'out-stock'}">
+                                        ${b.stockQuantity > 0 ? ('Kho: ' += b.stockQuantity += ' cuốn') : 'Tạm hết hàng'}
+                                    </span>
+                                    <span class="meta-dot">•</span>
+                                    <span class="meta-pub">${fn:escapeXml(b.publisher)}</span>
                                 </div>
                                 <div class="card-footer-price">
                                     <div class="price-box">
                                         <span class="current-price">${b.formattedPrice}</span>
                                     </div>
-                                    <button type="button" class="btn-add-cart-mini" title="Thêm vào giỏ" aria-label="Thêm vào giỏ">
-                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path><line x1="3" y1="6" x2="21" y2="6"></line><path d="M16 10a4 4 0 0 1-8 0"></path></svg>
+                                    <button type="button" class="btn-add-cart-mini" title="Thêm vào giỏ hàng" aria-label="Thêm vào giỏ hàng">
+                                        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path><line x1="3" y1="6" x2="21" y2="6"></line><path d="M16 10a4 4 0 0 1-8 0"></path></svg>
+                                        <span>Thêm</span>
                                     </button>
                                 </div>
                             </div>
@@ -214,7 +225,7 @@
                 <div class="toolbar-info">
                     Hiển thị <strong>${fn:length(books)}</strong> trên tổng số <strong>${totalBooks}</strong> cuốn sách
                     <c:if test="${not empty keyword or not empty selectedCategoryId}">
-                        <span>• <a href="${pageContext.request.contextPath}/home" style="color:var(--primary); font-weight:600;">[Xóa bộ lọc]</a></span>
+                        <span>• <a href="${pageContext.request.contextPath}/home" class="clear-filter-link">[Xóa bộ lọc]</a></span>
                     </c:if>
                 </div>
                 <div class="toolbar-actions">
@@ -250,38 +261,49 @@
                                      data-image="${pageContext.request.contextPath}/book-image?bookId=${b.bookId}">
                                 <div class="card-image-wrap">
                                     <div class="card-badges">
-                                        <span class="badge-cat">${b.categoryName}</span>
+                                        <span class="badge-cat">${fn:escapeXml(b.categoryName)}</span>
+                                        <c:if test="${not empty b.bookStatus}">
+                                            <span class="badge-status ${b.bookStatus == 'Bán' ? 'sale' : (b.bookStatus == 'Cho thuê' ? 'rent' : 'rented')}">
+                                                ${fn:escapeXml(b.bookStatus)}
+                                            </span>
+                                        </c:if>
                                         <c:if test="${b.stockQuantity <= 0}">
                                             <span class="badge-stock-out">Hết hàng</span>
                                         </c:if>
                                     </div>
-                                    <img src="${pageContext.request.contextPath}/book-image?bookId=${b.bookId}" alt="${fn:escapeXml(b.title)}" loading="lazy">
+                                    <a href="${pageContext.request.contextPath}/book-detail?id=${b.bookId}" class="card-image-link" aria-label="${fn:escapeXml(b.title)}">
+                                        <img src="${pageContext.request.contextPath}/book-image?bookId=${b.bookId}" alt="${fn:escapeXml(b.title)}" loading="lazy">
+                                    </a>
                                     <div class="card-quick-actions">
                                         <button type="button" class="action-btn-quick btn-quick-view" aria-label="Xem nhanh">
                                             <span>Xem Nhanh</span>
                                         </button>
-                                        <a href="${pageContext.request.contextPath}/book-detail?id=${b.bookId}" class="action-btn-quick" style="text-decoration:none;">
+                                        <a href="${pageContext.request.contextPath}/book-detail?id=${b.bookId}" class="action-btn-quick">
                                             <span>Chi Tiết</span>
                                         </a>
                                     </div>
                                 </div>
                                 <div class="card-body">
                                     <h3 class="card-title" title="${fn:escapeXml(b.title)}">
-                                        <a href="${pageContext.request.contextPath}/book-detail?id=${b.bookId}" style="color:inherit; text-decoration:none;">${b.title}</a>
+                                        <a href="${pageContext.request.contextPath}/book-detail?id=${b.bookId}">${fn:escapeXml(b.title)}</a>
                                     </h3>
                                     <p class="card-author">
-                                        Tác giả: <strong>${b.author}</strong>
+                                        Tác giả: <strong>${fn:escapeXml(b.author)}</strong>
                                     </p>
-                                    <div class="card-rating">
-                                        <span>Đánh giá: 4.9</span>
-                                        <span class="review-count">(${b.stockQuantity + 20} lượt mua)</span>
+                                    <div class="card-meta-row">
+                                        <span class="meta-stock ${b.stockQuantity > 0 ? 'in-stock' : 'out-stock'}">
+                                            ${b.stockQuantity > 0 ? ('Kho: ' += b.stockQuantity += ' cuốn') : 'Tạm hết hàng'}
+                                        </span>
+                                        <span class="meta-dot">•</span>
+                                        <span class="meta-pub">${fn:escapeXml(b.publisher)}</span>
                                     </div>
                                     <div class="card-footer-price">
                                         <div class="price-box">
                                             <span class="current-price">${b.formattedPrice}</span>
                                         </div>
-                                        <button type="button" class="btn-add-cart-mini" title="Thêm vào giỏ" aria-label="Thêm vào giỏ">
-                                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path><line x1="3" y1="6" x2="21" y2="6"></line><path d="M16 10a4 4 0 0 1-8 0"></path></svg>
+                                        <button type="button" class="btn-add-cart-mini" title="Thêm vào giỏ hàng" aria-label="Thêm vào giỏ hàng">
+                                            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path><line x1="3" y1="6" x2="21" y2="6"></line><path d="M16 10a4 4 0 0 1-8 0"></path></svg>
+                                            <span>Thêm</span>
                                         </button>
                                     </div>
                                 </div>
@@ -327,7 +349,7 @@
                         </div>
                         <h3>Không tìm thấy cuốn sách nào phù hợp</h3>
                         <p>Hãy thử tìm kiếm với từ khóa khác hoặc xóa bớt các tiêu chí lọc.</p>
-                        <a href="${pageContext.request.contextPath}/home" class="btn-primary" style="display:inline-flex;">Xem Toàn Bộ Sách</a>
+                        <a href="${pageContext.request.contextPath}/home" class="btn-primary">Xem Toàn Bộ Sách</a>
                     </div>
                 </c:otherwise>
             </c:choose>
@@ -341,7 +363,7 @@
                         <h3>Đăng Ký Nhận Bản Tin Tri Thức</h3>
                         <p>Nhận ngay mã giảm giá <strong>15%</strong> cho đơn hàng đầu tiên cùng những gợi ý sách hay tuyển chọn hàng tuần.</p>
                     </div>
-                    <form class="newsletter-form" onsubmit="event.preventDefault(); showToast('Đăng ký thành công!', 'Cảm ơn bạn đã đăng ký nhận bản tin!');">
+                    <form class="newsletter-form" id="newsletterForm">
                         <input type="email" class="newsletter-input" placeholder="Nhập địa chỉ email của bạn..." required>
                         <button type="submit" class="newsletter-btn">Đăng Ký</button>
                     </form>
@@ -361,7 +383,7 @@
                         <img id="modalBookImg" src="" alt="Book Cover">
                     </div>
                     <div class="modal-details">
-                        <span class="badge-cat" id="modalBookCategory" style="display:inline-block; margin-bottom:8px;">Thể Loại</span>
+                        <span class="badge-cat modal-cat-badge" id="modalBookCategory">Thể Loại</span>
                         <h3 id="modalBookTitle">Tên Cuốn Sách</h3>
                         <div class="modal-meta">
                             <span>Tác giả: <strong id="modalBookAuthor">...</strong></span>
@@ -373,17 +395,17 @@
                         <div class="modal-description" id="modalBookDesc">
                             Mô tả chi tiết cuốn sách...
                         </div>
-                        <div class="modal-actions" style="flex-wrap:wrap; gap:10px;">
+                        <div class="modal-actions">
                             <div class="quantity-control">
                                 <button type="button" class="qty-btn" id="qtyMinusBtn">-</button>
                                 <input type="number" id="modalQtyInput" class="qty-input" value="1" min="1" max="99" readonly>
                                 <button type="button" class="qty-btn" id="qtyPlusBtn">+</button>
                             </div>
-                            <button type="button" class="btn-primary" id="modalAddToCartBtn" style="padding: 10px 24px;">
+                            <button type="button" class="btn-primary modal-add-cart-btn" id="modalAddToCartBtn">
                                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path><line x1="3" y1="6" x2="21" y2="6"></line><path d="M16 10a4 4 0 0 1-8 0"></path></svg>
                                 <span>Thêm Vào Giỏ</span>
                             </button>
-                            <a href="#" id="modalViewDetailLink" class="btn-secondary" style="padding: 10px 18px; text-decoration:none; color:#334155; border:1px solid #cbd5e1; border-radius:10px; font-weight:600;">
+                            <a href="#" id="modalViewDetailLink" class="btn-secondary modal-detail-link">
                                 Xem Chi Tiết →
                             </a>
                         </div>

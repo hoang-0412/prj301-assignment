@@ -26,12 +26,22 @@ public class HomeController extends HttpServlet {
     private final CartDAO cartDAO = new CartDAO();
     private final CartItemDAO cartItemDAO = new CartItemDAO();
 
-    @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+    protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
         request.setCharacterEncoding("UTF-8");
         response.setCharacterEncoding("UTF-8");
+
+        String service = request.getParameter("service");
+        if (service == null || service.trim().isEmpty()) {
+            service = request.getParameter("action");
+        }
+        if (service == null || service.trim().isEmpty()) {
+            service = "listAllBook";
+        }
+        service = service.trim();
+
+        if ("listAllBook".equals(service) || "search".equals(service)) {
 
         // 1. Lấy các tham số lọc, tìm kiếm, sắp xếp và phân trang
         String keyword = request.getParameter("keyword");
@@ -132,11 +142,18 @@ public class HomeController extends HttpServlet {
 
         // 5. Chuyển hướng sang /jsp/homepage.jsp
         request.getRequestDispatcher("/jsp/homepage.jsp").forward(request, response);
+        }
+    }
+
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        processRequest(request, response);
     }
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        doGet(request, response);
+        processRequest(request, response);
     }
 }

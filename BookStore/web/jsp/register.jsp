@@ -91,6 +91,7 @@
 
         <script src="${pageContext.request.contextPath}/components/header/header.js"></script>
         <script src="${pageContext.request.contextPath}/components/footer/footer.js"></script>
+        <script src="${pageContext.request.contextPath}/js/register.js"></script>
     </body>
 </html>
 

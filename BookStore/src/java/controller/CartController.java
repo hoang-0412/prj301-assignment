@@ -36,8 +36,7 @@ public class CartController extends HttpServlet {
     private final OrderDAO orderDAO = new OrderDAO();
     private final OrderItemDAO orderItemDAO = new OrderItemDAO();
 
-    @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+    protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
         request.setCharacterEncoding("UTF-8");
@@ -51,83 +50,78 @@ public class CartController extends HttpServlet {
             mergeGuestCartIntoDb(session, currentUser.getUserId());
         }
 
-        // Flash messages
-        String successMsg = (String) session.getAttribute("cartSuccessMsg");
-        String errorMsg = (String) session.getAttribute("cartErrorMsg");
-        if (successMsg != null) {
-            request.setAttribute("successMsg", successMsg);
-            session.removeAttribute("cartSuccessMsg");
+        String service = request.getParameter("service");
+        if (service == null || service.trim().isEmpty()) {
+            service = request.getParameter("action");
         }
-        if (errorMsg != null) {
-            request.setAttribute("errorMsg", errorMsg);
-            session.removeAttribute("cartErrorMsg");
+        if (service == null || service.trim().isEmpty()) {
+            service = "POST".equalsIgnoreCase(request.getMethod()) ? "add" : "viewCart";
         }
+        service = service.trim();
 
-        Vector<CartItem> cartItems = loadCartItemsWithBooks(session, currentUser);
-        int cartCount = 0;
-        double totalAmount = 0;
-        for (CartItem ci : cartItems) {
-            cartCount += ci.getQuantity();
-            totalAmount += ci.getSubtotal();
+        boolean isAjax = "XMLHttpRequest".equalsIgnoreCase(request.getHeader("X-Requested-With"))
+                || "true".equalsIgnoreCase(request.getParameter("ajax"));
+
+        if ("viewCart".equals(service)) {
+            // Flash messages
+            String successMsg = (String) session.getAttribute("cartSuccessMsg");
+            String errorMsg = (String) session.getAttribute("cartErrorMsg");
+            if (successMsg != null) {
+                request.setAttribute("successMsg", successMsg);
+                session.removeAttribute("cartSuccessMsg");
+            }
+            if (errorMsg != null) {
+                request.setAttribute("errorMsg", errorMsg);
+                session.removeAttribute("cartErrorMsg");
+            }
+
+            Vector<CartItem> cartItems = loadCartItemsWithBooks(session, currentUser);
+            int cartCount = 0;
+            double totalAmount = 0;
+            for (CartItem ci : cartItems) {
+                cartCount += ci.getQuantity();
+                totalAmount += ci.getSubtotal();
+            }
+            session.setAttribute("cartCount", cartCount);
+
+            String formattedTotal = String.format("%,.0f đ", totalAmount).replace(',', '.');
+            Vector<Category> categories = categoryDAO.getAllCategory();
+
+            request.setAttribute("cartItems", cartItems);
+            request.setAttribute("cartCount", cartCount);
+            request.setAttribute("totalAmount", totalAmount);
+            request.setAttribute("formattedTotal", formattedTotal);
+            request.setAttribute("categories", categories);
+
+            request.getRequestDispatcher("/jsp/cart.jsp").forward(request, response);
+        } else if ("add".equals(service)) {
+            handleAddToCart(request, response, session, currentUser, isAjax);
+        } else if ("update".equals(service)) {
+            handleUpdateCartItem(request, session, currentUser);
+            response.sendRedirect(request.getContextPath() + "/cart");
+        } else if ("remove".equals(service)) {
+            handleRemoveCartItem(request, session, currentUser);
+            response.sendRedirect(request.getContextPath() + "/cart");
+        } else if ("clear".equals(service)) {
+            handleClearCart(session, currentUser);
+            response.sendRedirect(request.getContextPath() + "/cart");
+        } else if ("checkout".equals(service)) {
+            handleCheckout(request, response, session, currentUser);
+        } else {
+            response.sendRedirect(request.getContextPath() + "/cart");
         }
-        session.setAttribute("cartCount", cartCount);
+    }
 
-        String formattedTotal = String.format("%,.0f đ", totalAmount).replace(',', '.');
-        Vector<Category> categories = categoryDAO.getAllCategory();
-
-        request.setAttribute("cartItems", cartItems);
-        request.setAttribute("cartCount", cartCount);
-        request.setAttribute("totalAmount", totalAmount);
-        request.setAttribute("formattedTotal", formattedTotal);
-        request.setAttribute("categories", categories);
-
-        request.getRequestDispatcher("/jsp/cart.jsp").forward(request, response);
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        processRequest(request, response);
     }
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-
-        request.setCharacterEncoding("UTF-8");
-        response.setCharacterEncoding("UTF-8");
-
-        HttpSession session = request.getSession(true);
-        User currentUser = (User) session.getAttribute("user");
-        if (currentUser != null) {
-            mergeGuestCartIntoDb(session, currentUser.getUserId());
-        }
-
-        String action = request.getParameter("action");
-        if (action == null || action.trim().isEmpty()) {
-            action = "add";
-        }
-
-        boolean isAjax = "XMLHttpRequest".equalsIgnoreCase(request.getHeader("X-Requested-With"))
-                || "true".equalsIgnoreCase(request.getParameter("ajax"));
-
-        switch (action) {
-            case "add":
-                handleAddToCart(request, response, session, currentUser, isAjax);
-                break;
-            case "update":
-                handleUpdateCartItem(request, session, currentUser);
-                response.sendRedirect(request.getContextPath() + "/cart");
-                break;
-            case "remove":
-                handleRemoveCartItem(request, session, currentUser);
-                response.sendRedirect(request.getContextPath() + "/cart");
-                break;
-            case "clear":
-                handleClearCart(session, currentUser);
-                response.sendRedirect(request.getContextPath() + "/cart");
-                break;
-            case "checkout":
-                handleCheckout(request, response, session, currentUser);
-                break;
-            default:
-                response.sendRedirect(request.getContextPath() + "/cart");
-                break;
-        }
+        processRequest(request, response);
     }
 
     private void handleAddToCart(HttpServletRequest request, HttpServletResponse response,

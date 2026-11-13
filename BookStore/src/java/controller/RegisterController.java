@@ -21,29 +21,33 @@ public class RegisterController extends HttpServlet {
     private final CartDAO cartDAO = new CartDAO();
     private final CategoryDAO categoryDAO = new CategoryDAO();
 
-    @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+    protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
         request.setCharacterEncoding("UTF-8");
         response.setCharacterEncoding("UTF-8");
 
-        HttpSession session = request.getSession(true);
-        if (session.getAttribute("user") != null) {
-            response.sendRedirect(request.getContextPath() + "/home");
-            return;
+        String service = request.getParameter("service");
+        if (service == null || service.trim().isEmpty()) {
+            service = request.getParameter("action");
         }
+        if (service == null || service.trim().isEmpty()) {
+            service = "register";
+        }
+        service = service.trim();
 
-        request.setAttribute("categories", categoryDAO.getAllCategory());
-        request.getRequestDispatcher("/jsp/register.jsp").forward(request, response);
-    }
+        if ("register".equals(service)) {
+            String submit = request.getParameter("submit");
+            if (!"POST".equalsIgnoreCase(request.getMethod()) && submit == null) {
+                HttpSession session = request.getSession(true);
+                if (session.getAttribute("user") != null) {
+                    response.sendRedirect(request.getContextPath() + "/home");
+                    return;
+                }
 
-    @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-
-        request.setCharacterEncoding("UTF-8");
-        response.setCharacterEncoding("UTF-8");
+                request.setAttribute("categories", categoryDAO.getAllCategory());
+                request.getRequestDispatcher("/jsp/register.jsp").forward(request, response);
+            } else {
 
         String fullName = trimParam(request.getParameter("fullName"));
         String email = trimParam(request.getParameter("email"));
@@ -113,6 +117,20 @@ public class RegisterController extends HttpServlet {
             request.setAttribute("errorMsg", "Đăng ký tài khoản thất bại, vui lòng thử lại!");
             request.getRequestDispatcher("/jsp/register.jsp").forward(request, response);
         }
+            }
+        }
+    }
+
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        processRequest(request, response);
+    }
+
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        processRequest(request, response);
     }
 
     private String trimParam(String val) {

@@ -12,13 +12,8 @@ public class OrderDAO extends DBContext {
 
     private static final Logger LOGGER = Logger.getLogger(OrderDAO.class.getName());
 
-    public Vector<Order> getAllOrder() {
+    public Vector<Order> getAllOrder(String sql) {
         Vector<Order> vector = new Vector<>();
-        String sql = "SELECT o.orderId, o.userId, o.totalAmount, o.orderStatus, o.shippingAddress, "
-                + "o.recipientPhone, o.paymentMethod, o.paymentStatus, o.createdAt, u.fullName "
-                + "FROM [Order] o "
-                + "LEFT JOIN [User] u ON o.userId = u.userId "
-                + "ORDER BY o.orderId DESC";
         try (PreparedStatement ptm = connection.prepareStatement(sql);
              ResultSet rs = ptm.executeQuery()) {
             while (rs.next()) {
@@ -33,7 +28,9 @@ public class OrderDAO extends DBContext {
                         rs.getString(8),
                         rs.getDate(9)
                 );
-                o.setCustomerName(rs.getString(10));
+                if (rs.getMetaData().getColumnCount() >= 10) {
+                    o.setCustomerName(rs.getString(10));
+                }
                 vector.add(o);
             }
             OrderItemDAO itemDAO = new OrderItemDAO();
@@ -44,6 +41,15 @@ public class OrderDAO extends DBContext {
             LOGGER.log(Level.SEVERE, "Lỗi khi lấy danh sách đơn hàng", ex);
         }
         return vector;
+    }
+
+    public Vector<Order> getAllOrder() {
+        String sql = "SELECT o.orderId, o.userId, o.totalAmount, o.orderStatus, o.shippingAddress, "
+                + "o.recipientPhone, o.paymentMethod, o.paymentStatus, o.createdAt, u.fullName "
+                + "FROM [Order] o "
+                + "LEFT JOIN [User] u ON o.userId = u.userId "
+                + "ORDER BY o.orderId DESC";
+        return getAllOrder(sql);
     }
 
     public Order searchOrder(int orderId) {

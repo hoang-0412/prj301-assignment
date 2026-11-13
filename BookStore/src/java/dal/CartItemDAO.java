@@ -12,9 +12,8 @@ public class CartItemDAO extends DBContext {
 
     private static final Logger LOGGER = Logger.getLogger(CartItemDAO.class.getName());
 
-    public Vector<CartItem> getAllCartItem() {
+    public Vector<CartItem> getAllCartItem(String sql) {
         Vector<CartItem> vector = new Vector<>();
-        String sql = "SELECT cartItemId, cartId, bookId, quantity, addedAt FROM CartItem";
         try (PreparedStatement ptm = connection.prepareStatement(sql);
              ResultSet rs = ptm.executeQuery()) {
             while (rs.next()) {
@@ -31,6 +30,11 @@ public class CartItemDAO extends DBContext {
             LOGGER.log(Level.SEVERE, "Lỗi khi lấy danh sách sản phẩm trong giỏ", ex);
         }
         return vector;
+    }
+
+    public Vector<CartItem> getAllCartItem() {
+        String sql = "SELECT cartItemId, cartId, bookId, quantity, addedAt FROM CartItem";
+        return getAllCartItem(sql);
     }
 
     public CartItem searchCartItem(int cartItemId) {

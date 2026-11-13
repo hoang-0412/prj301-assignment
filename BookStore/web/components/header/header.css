@@ -195,6 +195,119 @@
     box-shadow: var(--hdr-shadow-sm);
 }
 
+.cart-badge.is-hidden {
+    display: none;
+}
+
+/* Admin quick access pill */
+.header-admin-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    height: 40px;
+    padding: 0 14px;
+    border-radius: var(--hdr-radius-full);
+    background: var(--hdr-primary-light);
+    border: 1px solid #c7d2fe;
+    color: var(--hdr-primary);
+    font-size: 13px;
+    font-weight: 700;
+    text-decoration: none;
+    transition: var(--hdr-transition);
+}
+
+.header-admin-pill:hover {
+    background: var(--hdr-primary);
+    border-color: var(--hdr-primary);
+    color: var(--hdr-white);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(79, 70, 229, 0.28);
+}
+
+/* Logged-in user pill button */
+.header-user-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    height: 42px;
+    padding: 4px 12px 4px 5px;
+    border-radius: var(--hdr-radius-full);
+    background: var(--hdr-white);
+    border: 1px solid var(--hdr-gray-200);
+    color: var(--hdr-dark-800);
+    cursor: pointer;
+    transition: var(--hdr-transition);
+    box-shadow: var(--hdr-shadow-sm);
+    outline: none;
+}
+
+.header-user-pill:hover,
+.header-user-wrap.active .header-user-pill {
+    border-color: var(--hdr-primary);
+    background: var(--hdr-gray-50);
+    box-shadow: var(--hdr-shadow-md);
+}
+
+.header-user-avatar {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--hdr-primary) 0%, #6366f1 100%);
+    color: var(--hdr-white);
+    font-size: 13px;
+    font-weight: 800;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    text-transform: uppercase;
+    flex-shrink: 0;
+}
+
+.header-user-ShortName {
+    font-size: 13.5px;
+    font-weight: 600;
+    color: var(--hdr-dark-800);
+    max-width: 115px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.header-user-chevron {
+    color: var(--hdr-gray-400);
+    transition: transform 0.2s ease;
+}
+
+.header-user-wrap:hover .header-user-chevron,
+.header-user-wrap.active .header-user-chevron {
+    transform: rotate(180deg);
+    color: var(--hdr-primary);
+}
+
+/* Login button pill (guest state) */
+.header-login-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    height: 42px;
+    padding: 0 18px;
+    border-radius: var(--hdr-radius-full);
+    background: linear-gradient(135deg, var(--hdr-primary) 0%, var(--hdr-primary-hover) 100%);
+    color: var(--hdr-white);
+    border: none;
+    font-size: 13.5px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--hdr-transition);
+    box-shadow: 0 4px 12px rgba(79, 70, 229, 0.25);
+    outline: none;
+}
+
+.header-login-pill:hover {
+    transform: translateY(-1.5px);
+    box-shadow: 0 6px 16px rgba(79, 70, 229, 0.36);
+}
+
 /* ==========================================================
    5. SEARCH POPUP MODAL OVERLAY
    ========================================================== */
@@ -534,13 +647,14 @@
     width: 58px;
     height: 58px;
     border-radius: 50%;
-    background: #fff1f2;
-    border: 2px solid #ffe4e6;
+    background: var(--hdr-primary-light);
+    border: 2px solid #c7d2fe;
+    color: var(--hdr-primary);
     display: flex;
     align-items: center;
     justify-content: center;
     margin: 0 auto 16px;
-    box-shadow: 0 4px 12px rgba(244, 63, 94, 0.12);
+    box-shadow: 0 4px 12px rgba(79, 70, 229, 0.14);
 }
 
 /* Modal Title & Subtitle */
@@ -590,7 +704,7 @@
 .auth-badge-change {
     background: none;
     border: none;
-    color: #f43f5e;
+    color: var(--hdr-primary);
     font-size: 12.5px;
     font-weight: 600;
     cursor: pointer;
@@ -600,7 +714,7 @@
 }
 
 .auth-badge-change:hover {
-    color: #e11d48;
+    color: var(--hdr-primary-hover);
 }
 
 /* Form Controls */
@@ -633,8 +747,8 @@
 }
 
 .auth-input:focus {
-    border-color: #f43f5e;
-    box-shadow: 0 0 0 3.5px rgba(244, 63, 94, 0.15);
+    border-color: var(--hdr-primary);
+    box-shadow: 0 0 0 3.5px var(--hdr-primary-focus);
 }
 
 .auth-input::placeholder {
@@ -681,7 +795,7 @@
 }
 
 .auth-forgot-link {
-    color: #f43f5e;
+    color: var(--hdr-primary);
     font-size: 13px;
     font-weight: 600;
     text-decoration: none;
@@ -689,16 +803,16 @@
 }
 
 .auth-forgot-link:hover {
-    color: #e11d48;
+    color: var(--hdr-primary-hover);
     text-decoration: underline;
 }
 
-/* Primary Pill Action Button (Coral/Pink like TulaLove) */
+/* Primary Pill Action Button */
 .auth-btn-primary {
     width: 100%;
     height: 48px;
     border-radius: var(--hdr-radius-full);
-    background: #f43f5e;
+    background: linear-gradient(135deg, var(--hdr-primary) 0%, var(--hdr-primary-hover) 100%);
     color: #ffffff;
     font-size: 15px;
     font-weight: 600;
@@ -709,15 +823,15 @@
     justify-content: center;
     gap: 8px;
     transition: all 0.22s cubic-bezier(0.4, 0, 0.2, 1);
-    box-shadow: 0 4px 14px rgba(244, 63, 94, 0.32);
+    box-shadow: 0 4px 14px rgba(79, 70, 229, 0.3);
     font-family: inherit;
     margin-top: 18px;
     outline: none;
 }
 
 .auth-btn-primary:hover {
-    background: #e11d48;
-    box-shadow: 0 6px 20px rgba(244, 63, 94, 0.42);
+    background: linear-gradient(135deg, var(--hdr-primary-hover) 0%, #3730a3 100%);
+    box-shadow: 0 6px 20px rgba(79, 70, 229, 0.4);
     transform: translateY(-1.5px);
 }
 
@@ -733,6 +847,7 @@
 
 /* Feedback Messages */
 .auth-feedback {
+    display: none;
     padding: 10px 14px;
     border-radius: 10px;
     font-size: 13px;
@@ -743,21 +858,70 @@
 }
 
 .auth-feedback.error {
+    display: block;
     background: #fef2f2;
     color: #dc2626;
     border: 1px solid #fecaca;
 }
 
 .auth-feedback.success {
+    display: block;
     background: #f0fdf4;
     color: #16a34a;
     border: 1px solid #bbf7d0;
 }
 
 .auth-feedback.info {
+    display: block;
     background: #eff6ff;
     color: #2563eb;
     border: 1px solid #bfdbfe;
+}
+
+#authStep2Panel,
+#authStepRegisterPanel,
+#authStepForgotPanel,
+.auth-step-hidden {
+    display: none;
+}
+
+.eye-icon-hide {
+    display: none;
+}
+
+.auth-form-group-spaced {
+    margin-top: 14px;
+}
+
+.auth-register-prompt {
+    text-align: center;
+    margin-top: 14px;
+    font-size: 13px;
+    color: #64748b;
+}
+
+.auth-register-link {
+    color: #4f46e5;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.auth-register-link:hover {
+    text-decoration: underline;
+}
+
+.auth-back-wrap {
+    text-align: center;
+    margin-top: 14px;
+}
+
+.auth-btn-back-forgot {
+    background: #334155;
+    margin-top: 18px;
+}
+
+.auth-btn-back-forgot:hover {
+    background: #1e293b;
 }
 
 @keyframes authFadeIn {
