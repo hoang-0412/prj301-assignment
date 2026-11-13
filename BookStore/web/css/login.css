@@ -18,7 +18,7 @@ body {
     align-items: center;
     justify-content: center;
     padding: 40px 20px;
-    background: radial-gradient(circle at 50% 20%, rgba(244, 63, 94, 0.08) 0%, rgba(248, 250, 252, 1) 60%);
+    background: radial-gradient(circle at 50% 20%, rgba(79, 70, 229, 0.08) 0%, rgba(248, 250, 252, 1) 60%);
 }
 
 .standalone-login-wrapper .auth-modal-card {

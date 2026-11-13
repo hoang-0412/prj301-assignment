@@ -12,9 +12,8 @@ public class RoleDAO extends DBContext {
 
     private static final Logger LOGGER = Logger.getLogger(RoleDAO.class.getName());
 
-    public Vector<Role> getAllRole() {
+    public Vector<Role> getAllRole(String sql) {
         Vector<Role> vector = new Vector<>();
-        String sql = "SELECT roleId, roleName FROM [Role]";
         try (PreparedStatement ptm = connection.prepareStatement(sql);
              ResultSet rs = ptm.executeQuery()) {
             while (rs.next()) {
@@ -25,6 +24,11 @@ public class RoleDAO extends DBContext {
             LOGGER.log(Level.SEVERE, "Lỗi khi lấy danh sách vai trò", ex);
         }
         return vector;
+    }
+
+    public Vector<Role> getAllRole() {
+        String sql = "SELECT roleId, roleName FROM [Role]";
+        return getAllRole(sql);
     }
 
     public Role searchRole(int roleId) {

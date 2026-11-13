@@ -45,9 +45,8 @@ public class BookImagesDAO extends DBContext {
         return new BookImages(imageId, bookId, imageData, mimeType, isCover, createdAt);
     }
 
-    public Vector<BookImages> getAllBookImages() {
+    public Vector<BookImages> getAllBookImages(String sql) {
         Vector<BookImages> vector = new Vector<>();
-        String sql = "SELECT imageId, bookId, imageData, mimeType, isCover, createdAt FROM BookImages";
         try (PreparedStatement ptm = connection.prepareStatement(sql); ResultSet rs = ptm.executeQuery()) {
             while (rs.next()) {
                 vector.add(mapResultSetToBookImage(rs));
@@ -56,6 +55,11 @@ public class BookImagesDAO extends DBContext {
             LOGGER.log(Level.SEVERE, "Lỗi khi lấy toàn bộ danh sách ảnh sách", ex);
         }
         return vector;
+    }
+
+    public Vector<BookImages> getAllBookImages() {
+        String sql = "SELECT imageId, bookId, imageData, mimeType, isCover, createdAt FROM BookImages";
+        return getAllBookImages(sql);
     }
 
     public Vector<BookImages> getImagesByBookId(int bookId) {

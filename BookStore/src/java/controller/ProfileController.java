@@ -34,8 +34,7 @@ public class ProfileController extends HttpServlet {
     private final CartDAO cartDAO = new CartDAO();
     private final CartItemDAO cartItemDAO = new CartItemDAO();
 
-    @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+    protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
         request.setCharacterEncoding("UTF-8");
@@ -57,121 +56,108 @@ public class ProfileController extends HttpServlet {
         }
         session.setAttribute("user", currentUser);
 
-        // Flash messages
-        String successMsg = (String) session.getAttribute("profileSuccessMsg");
-        String errorMsg = (String) session.getAttribute("profileErrorMsg");
-        if (successMsg != null) {
-            request.setAttribute("successMsg", successMsg);
-            session.removeAttribute("profileSuccessMsg");
+        String service = request.getParameter("service");
+        if (service == null || service.trim().isEmpty()) {
+            service = request.getParameter("action");
         }
-        if (errorMsg != null) {
-            request.setAttribute("errorMsg", errorMsg);
-            session.removeAttribute("profileErrorMsg");
+        if (service == null || service.trim().isEmpty()) {
+            service = "viewProfile";
         }
+        service = service.trim();
 
-        String servletPath = request.getServletPath();
-        String activeTab = request.getParameter("tab");
-        if (activeTab == null || activeTab.trim().isEmpty()) {
-            if ("/my-orders".equalsIgnoreCase(servletPath)) {
-                activeTab = "orders";
-            } else {
-                activeTab = "profile";
+        if ("viewProfile".equals(service)) {
+            // Flash messages
+            String successMsg = (String) session.getAttribute("profileSuccessMsg");
+            String errorMsg = (String) session.getAttribute("profileErrorMsg");
+            if (successMsg != null) {
+                request.setAttribute("successMsg", successMsg);
+                session.removeAttribute("profileSuccessMsg");
             }
-        }
-
-        Vector<Order> myOrders = orderDAO.getOrdersByUserId(currentUser.getUserId());
-        int totalOrdersCount = myOrders.size();
-        int pendingOrdersCount = 0;
-        int completedOrdersCount = 0;
-        double totalSpent = 0;
-
-        for (Order o : myOrders) {
-            if ("Pending".equalsIgnoreCase(o.getOrderStatus())) {
-                pendingOrdersCount++;
-            } else if ("Completed".equalsIgnoreCase(o.getOrderStatus())) {
-                completedOrdersCount++;
+            if (errorMsg != null) {
+                request.setAttribute("errorMsg", errorMsg);
+                session.removeAttribute("profileErrorMsg");
             }
-            if (!"Cancelled".equalsIgnoreCase(o.getOrderStatus())) {
-                totalSpent += o.getTotalAmount();
-            }
-        }
 
-        String formattedTotalSpent = String.format("%,.0f đ", totalSpent).replace(',', '.');
-
-        // Tính số lượng giỏ hàng
-        int cartCount = 0;
-        try {
-            Cart cart = cartDAO.getCartByUserId(currentUser.getUserId());
-            if (cart != null) {
-                Vector<CartItem> items = cartItemDAO.getCartItemsByCartId(cart.getCartId());
-                for (CartItem ci : items) {
-                    cartCount += ci.getQuantity();
+            String servletPath = request.getServletPath();
+            String activeTab = request.getParameter("tab");
+            if (activeTab == null || activeTab.trim().isEmpty()) {
+                if ("/my-orders".equalsIgnoreCase(servletPath)) {
+                    activeTab = "orders";
+                } else {
+                    activeTab = "profile";
                 }
             }
-        } catch (Exception ignored) {
+
+            Vector<Order> myOrders = orderDAO.getOrdersByUserId(currentUser.getUserId());
+            int totalOrdersCount = myOrders.size();
+            int pendingOrdersCount = 0;
+            int completedOrdersCount = 0;
+            double totalSpent = 0;
+
+            for (Order o : myOrders) {
+                if ("Pending".equalsIgnoreCase(o.getOrderStatus())) {
+                    pendingOrdersCount++;
+                } else if ("Completed".equalsIgnoreCase(o.getOrderStatus())) {
+                    completedOrdersCount++;
+                }
+                if (!"Cancelled".equalsIgnoreCase(o.getOrderStatus())) {
+                    totalSpent += o.getTotalAmount();
+                }
+            }
+
+            String formattedTotalSpent = String.format("%,.0f đ", totalSpent).replace(',', '.');
+
+            // Tính số lượng giỏ hàng
+            int cartCount = 0;
+            try {
+                Cart cart = cartDAO.getCartByUserId(currentUser.getUserId());
+                if (cart != null) {
+                    Vector<CartItem> items = cartItemDAO.getCartItemsByCartId(cart.getCartId());
+                    for (CartItem ci : items) {
+                        cartCount += ci.getQuantity();
+                    }
+                }
+            } catch (Exception ignored) {
+            }
+            session.setAttribute("cartCount", cartCount);
+
+            Vector<Category> categories = categoryDAO.getAllCategory();
+
+            request.setAttribute("activeTab", activeTab);
+            request.setAttribute("userProfile", currentUser);
+            request.setAttribute("myOrders", myOrders);
+            request.setAttribute("totalOrdersCount", totalOrdersCount);
+            request.setAttribute("pendingOrdersCount", pendingOrdersCount);
+            request.setAttribute("completedOrdersCount", completedOrdersCount);
+            request.setAttribute("formattedTotalSpent", formattedTotalSpent);
+            request.setAttribute("cartCount", cartCount);
+            request.setAttribute("categories", categories);
+
+            request.getRequestDispatcher("/jsp/profile.jsp").forward(request, response);
+        } else if ("updateProfile".equals(service)) {
+            handleUpdateProfile(request, session, currentUser);
+            response.sendRedirect(request.getContextPath() + "/profile?tab=profile");
+        } else if ("changePassword".equals(service)) {
+            handleChangePassword(request, session, currentUser);
+            response.sendRedirect(request.getContextPath() + "/profile?tab=password");
+        } else if ("cancelOrder".equals(service)) {
+            handleCancelOrder(request, session, currentUser);
+            response.sendRedirect(request.getContextPath() + "/profile?tab=orders");
+        } else {
+            response.sendRedirect(request.getContextPath() + "/profile?tab=profile");
         }
-        session.setAttribute("cartCount", cartCount);
+    }
 
-        Vector<Category> categories = categoryDAO.getAllCategory();
-
-        request.setAttribute("activeTab", activeTab);
-        request.setAttribute("userProfile", currentUser);
-        request.setAttribute("myOrders", myOrders);
-        request.setAttribute("totalOrdersCount", totalOrdersCount);
-        request.setAttribute("pendingOrdersCount", pendingOrdersCount);
-        request.setAttribute("completedOrdersCount", completedOrdersCount);
-        request.setAttribute("formattedTotalSpent", formattedTotalSpent);
-        request.setAttribute("cartCount", cartCount);
-        request.setAttribute("categories", categories);
-
-        request.getRequestDispatcher("/jsp/profile.jsp").forward(request, response);
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        processRequest(request, response);
     }
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-
-        request.setCharacterEncoding("UTF-8");
-        response.setCharacterEncoding("UTF-8");
-
-        HttpSession session = request.getSession(true);
-        User sessionUser = (User) session.getAttribute("user");
-        if (sessionUser == null) {
-            response.sendRedirect(request.getContextPath() + "/login");
-            return;
-        }
-
-        User currentUser = userDAO.searchUser(sessionUser.getUserId());
-        if (currentUser == null) {
-            response.sendRedirect(request.getContextPath() + "/login");
-            return;
-        }
-
-        String action = request.getParameter("action");
-        if (action == null) {
-            action = "";
-        }
-
-        String redirectTab = "profile";
-
-        switch (action) {
-            case "updateProfile":
-                handleUpdateProfile(request, session, currentUser);
-                redirectTab = "profile";
-                break;
-            case "changePassword":
-                handleChangePassword(request, session, currentUser);
-                redirectTab = "password";
-                break;
-            case "cancelOrder":
-                handleCancelOrder(request, session, currentUser);
-                redirectTab = "orders";
-                break;
-            default:
-                break;
-        }
-
-        response.sendRedirect(request.getContextPath() + "/profile?tab=" + redirectTab);
+        processRequest(request, response);
     }
 
     private void handleUpdateProfile(HttpServletRequest request, HttpSession session, User currentUser) {

@@ -139,6 +139,8 @@
     border: 1px solid #e2e8f0;
     padding: 12px;
     box-shadow: 0 4px 14px -4px rgba(15, 23, 42, 0.05);
+    position: sticky;
+    top: 92px;
 }
 
 .prf-nav {
@@ -311,6 +313,12 @@
     border-radius: 14px;
     overflow: hidden;
     background: #ffffff;
+    transition: box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.prf-order-card:hover {
+    border-color: #cbd5e1;
+    box-shadow: 0 8px 20px -6px rgba(15, 23, 42, 0.07);
 }
 
 .prf-order-top {
@@ -535,6 +543,9 @@
 @media (max-width: 900px) {
     .prf-grid {
         grid-template-columns: 1fr;
+    }
+    .prf-sidebar {
+        position: static;
     }
     .prf-form-grid {
         grid-template-columns: 1fr;

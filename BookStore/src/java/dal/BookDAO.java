@@ -6,8 +6,6 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.ArrayList;
-import java.util.List;
 import model.Book;
 import model.BookImages;
 
@@ -57,9 +55,8 @@ public class BookDAO extends DBContext {
         return b;
     }
 
-    public Vector<Book> getAllBook() {
+    public Vector<Book> getAllBook(String sql) {
         Vector<Book> vector = new Vector<>();
-        String sql = "SELECT bookId, categoryId, title, author, publisher, publicationYear, isbn, price, stockQuantity, description, createdAt, bookStatus FROM Book";
         try {
             PreparedStatement ptm = connection.prepareStatement(sql);
             ResultSet rs = ptm.executeQuery();
@@ -84,6 +81,11 @@ public class BookDAO extends DBContext {
         return vector;
     }
 
+    public Vector<Book> getAllBook() {
+        String sql = "SELECT bookId, categoryId, title, author, publisher, publicationYear, isbn, price, stockQuantity, description, createdAt, bookStatus FROM Book";
+        return getAllBook(sql);
+    }
+
     public Vector<Book> getBooksWithDetails(String keyword, Integer categoryId, String sortBy, int page, int pageSize) {
         Vector<Book> vector = new Vector<>();
         StringBuilder sql = new StringBuilder();
@@ -101,7 +103,7 @@ public class BookDAO extends DBContext {
            .append(") img ")
            .append("WHERE 1=1 ");
 
-        List<Object> params = new ArrayList<>();
+        Vector<Object> params = new Vector<>();
 
         if (keyword != null && !keyword.trim().isEmpty()) {
             sql.append("AND (b.title LIKE ? OR b.author LIKE ? OR b.publisher LIKE ?) ");
@@ -156,7 +158,7 @@ public class BookDAO extends DBContext {
     public int getTotalBooksCount(String keyword, Integer categoryId) {
         StringBuilder sql = new StringBuilder();
         sql.append("SELECT COUNT(*) FROM Book b WHERE 1=1 ");
-        List<Object> params = new ArrayList<>();
+        Vector<Object> params = new Vector<>();
 
         if (keyword != null && !keyword.trim().isEmpty()) {
             sql.append("AND (b.title LIKE ? OR b.author LIKE ? OR b.publisher LIKE ?) ");
@@ -342,12 +344,35 @@ public class BookDAO extends DBContext {
         return n;
     }
 
-    public int deleteBook(int bookId) {
-        String sql = "DELETE FROM Book WHERE bookId = ?";
-        int n = 0;
+    public void changeStatus(int bookId, String newStatus) {
+        String sql = "UPDATE Book SET bookStatus = ? WHERE bookId = ?";
         try (PreparedStatement ptm = connection.prepareStatement(sql)) {
+            ptm.setString(1, newStatus);
+            ptm.setInt(2, bookId);
+            ptm.executeUpdate();
+        } catch (SQLException ex) {
+            LOGGER.log(Level.SEVERE, "Lỗi khi đổi trạng thái sách có bookId: " + bookId, ex);
+        }
+    }
+
+    public int deleteBook(int bookId) {
+        int n = 0;
+        String sql1 = "DELETE FROM Book WHERE bookId = ?";
+        // Kiem tra bookId da tung duoc dat hang chua
+        // 1. Neu da nam trong OrderItem -> khong xoa, doi trang thai sang Ngừng bán
+        String sql2 = "SELECT * FROM OrderItem WHERE bookId = ?";
+        try (PreparedStatement ptm = connection.prepareStatement(sql2)) {
             ptm.setInt(1, bookId);
-            n = ptm.executeUpdate();
+            try (ResultSet rs = ptm.executeQuery()) {
+                if (rs.next()) {
+                    changeStatus(bookId, "Ngừng bán");
+                } else {
+                    try (PreparedStatement ptm1 = connection.prepareStatement(sql1)) {
+                        ptm1.setInt(1, bookId);
+                        n = ptm1.executeUpdate();
+                    }
+                }
+            }
         } catch (SQLException ex) {
             LOGGER.log(Level.SEVERE, "Lỗi khi xóa sách có bookId: " + bookId, ex);
         }

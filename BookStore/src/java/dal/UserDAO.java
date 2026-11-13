@@ -12,9 +12,8 @@ public class UserDAO extends DBContext {
 
     private static final Logger LOGGER = Logger.getLogger(UserDAO.class.getName());
 
-    public Vector<User> getAllUser() {
+    public Vector<User> getAllUser(String sql) {
         Vector<User> vector = new Vector<>();
-        String sql = "SELECT userId, roleId, fullName, email, passwordHash, phoneNumber, address, createdAt FROM [User]";
         try (PreparedStatement ptm = connection.prepareStatement(sql);
              ResultSet rs = ptm.executeQuery()) {
             while (rs.next()) {
@@ -34,6 +33,11 @@ public class UserDAO extends DBContext {
             LOGGER.log(Level.SEVERE, "Lỗi khi lấy toàn bộ danh sách người dùng", ex);
         }
         return vector;
+    }
+
+    public Vector<User> getAllUser() {
+        String sql = "SELECT userId, roleId, fullName, email, passwordHash, phoneNumber, address, createdAt FROM [User]";
+        return getAllUser(sql);
     }
 
     public User searchUser(int userId) {

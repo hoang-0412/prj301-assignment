@@ -12,24 +12,30 @@ public class CategoryDAO extends DBContext {
 
     private static final Logger LOGGER = Logger.getLogger(CategoryDAO.class.getName());
 
-    public Vector<Category> getAllCategory() {
+    public Vector<Category> getAllCategory(String sql) {
         Vector<Category> vector = new Vector<>();
-        String sql = "SELECT c.categoryId, c.categoryName, c.description, COUNT(b.bookId) AS bookCount "
-                   + "FROM Category c "
-                   + "LEFT JOIN Book b ON c.categoryId = b.categoryId "
-                   + "GROUP BY c.categoryId, c.categoryName, c.description "
-                   + "ORDER BY c.categoryId ASC";
         try (PreparedStatement ptm = connection.prepareStatement(sql);
              ResultSet rs = ptm.executeQuery()) {
             while (rs.next()) {
                 Category c = new Category(rs.getInt(1), rs.getString(2), rs.getString(3));
-                c.setBookCount(rs.getInt(4));
+                if (rs.getMetaData().getColumnCount() >= 4) {
+                    c.setBookCount(rs.getInt(4));
+                }
                 vector.add(c);
             }
         } catch (SQLException ex) {
             LOGGER.log(Level.SEVERE, "Lỗi khi lấy danh sách thể loại", ex);
         }
         return vector;
+    }
+
+    public Vector<Category> getAllCategory() {
+        String sql = "SELECT c.categoryId, c.categoryName, c.description, COUNT(b.bookId) AS bookCount "
+                   + "FROM Category c "
+                   + "LEFT JOIN Book b ON c.categoryId = b.categoryId "
+                   + "GROUP BY c.categoryId, c.categoryName, c.description "
+                   + "ORDER BY c.categoryId ASC";
+        return getAllCategory(sql);
     }
 
     public Category searchCategory(int categoryId) {

@@ -27,12 +27,22 @@ public class CatalogController extends HttpServlet {
     private final CartDAO cartDAO = new CartDAO();
     private final CartItemDAO cartItemDAO = new CartItemDAO();
 
-    @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+    protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
         request.setCharacterEncoding("UTF-8");
         response.setCharacterEncoding("UTF-8");
+
+        String service = request.getParameter("service");
+        if (service == null || service.trim().isEmpty()) {
+            service = request.getParameter("action");
+        }
+        if (service == null || service.trim().isEmpty()) {
+            service = "listCatalog";
+        }
+        service = service.trim();
+
+        if ("listCatalog".equals(service) || "filterCatalog".equals(service)) {
 
         String keyword = trimParam(request.getParameter("keyword"));
         Integer categoryId = parseIntOrNull(request.getParameter("categoryId"));
@@ -144,6 +154,19 @@ public class CatalogController extends HttpServlet {
         request.setAttribute("totalPages", totalPages);
 
         request.getRequestDispatcher("/jsp/catalog.jsp").forward(request, response);
+        }
+    }
+
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        processRequest(request, response);
+    }
+
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        processRequest(request, response);
     }
 
     private int computeCartCount(HttpSession session) {

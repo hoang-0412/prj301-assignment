@@ -32,12 +32,22 @@ public class AdminAnalyticsController extends HttpServlet {
     private final OrderDAO orderDAO = new OrderDAO();
     private final UserDAO userDAO = new UserDAO();
 
-    @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+    protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
         request.setCharacterEncoding("UTF-8");
         response.setCharacterEncoding("UTF-8");
+
+        String service = request.getParameter("service");
+        if (service == null || service.trim().isEmpty()) {
+            service = request.getParameter("action");
+        }
+        if (service == null || service.trim().isEmpty()) {
+            service = "viewAnalytics";
+        }
+        service = service.trim();
+
+        if ("viewAnalytics".equals(service)) {
 
         HttpSession session = request.getSession(true);
         User currentUser = (User) session.getAttribute("user");
@@ -201,6 +211,19 @@ public class AdminAnalyticsController extends HttpServlet {
         request.setAttribute("categories", categories);
 
         request.getRequestDispatcher("/jsp/adminanalytics.jsp").forward(request, response);
+        }
+    }
+
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        processRequest(request, response);
+    }
+
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        processRequest(request, response);
     }
 
     private String formatVND(double amount) {

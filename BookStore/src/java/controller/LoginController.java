@@ -22,39 +22,56 @@ public class LoginController extends HttpServlet {
     private final CartDAO cartDAO = new CartDAO();
     private final CartItemDAO cartItemDAO = new CartItemDAO();
 
+    protected void processRequest(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        request.setCharacterEncoding("UTF-8");
+        response.setCharacterEncoding("UTF-8");
+
+        String service = request.getParameter("service");
+        if (service == null || service.trim().isEmpty()) {
+            service = request.getParameter("action");
+        }
+        if (service == null || service.trim().isEmpty()) {
+            service = "login";
+        }
+        service = service.trim();
+
+        String isAjax = request.getHeader("X-Requested-With");
+        boolean ajax = "XMLHttpRequest".equalsIgnoreCase(isAjax) || "true".equalsIgnoreCase(request.getParameter("ajax"));
+        String submit = request.getParameter("submit");
+
+        if ("check".equalsIgnoreCase(service)) {
+            handleCheckIdentifier(request, response);
+        } else if ("register".equalsIgnoreCase(service)) {
+            if (!"POST".equalsIgnoreCase(request.getMethod()) && submit == null && !ajax) {
+                request.getRequestDispatcher("/jsp/login.jsp").forward(request, response);
+                return;
+            }
+            handleRegister(request, response, ajax);
+        } else if ("login".equalsIgnoreCase(service)) {
+            if (!"POST".equalsIgnoreCase(request.getMethod()) && submit == null && !ajax) {
+                HttpSession session = request.getSession(false);
+                if (session != null && session.getAttribute("user") != null) {
+                    response.sendRedirect(request.getContextPath() + "/homepage");
+                    return;
+                }
+                request.getRequestDispatcher("/jsp/login.jsp").forward(request, response);
+            } else {
+                handleLogin(request, response, ajax);
+            }
+        }
+    }
+
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        HttpSession session = request.getSession(false);
-        if (session != null && session.getAttribute("user") != null) {
-            response.sendRedirect(request.getContextPath() + "/homepage");
-            return;
-        }
-
-        request.getRequestDispatcher("/jsp/login.jsp").forward(request, response);
+        processRequest(request, response);
     }
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        request.setCharacterEncoding("UTF-8");
-        response.setCharacterEncoding("UTF-8");
-
-        String action = request.getParameter("action");
-        if (action == null || action.trim().isEmpty()) {
-            action = "login";
-        }
-
-        String isAjax = request.getHeader("X-Requested-With");
-        boolean ajax = "XMLHttpRequest".equalsIgnoreCase(isAjax) || "true".equalsIgnoreCase(request.getParameter("ajax"));
-
-        if ("check".equalsIgnoreCase(action)) {
-            handleCheckIdentifier(request, response);
-        } else if ("register".equalsIgnoreCase(action)) {
-            handleRegister(request, response, ajax);
-        } else {
-            handleLogin(request, response, ajax);
-        }
+        processRequest(request, response);
     }
 
     private void handleCheckIdentifier(HttpServletRequest request, HttpServletResponse response)

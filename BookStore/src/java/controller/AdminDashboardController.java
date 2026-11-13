@@ -45,8 +45,7 @@ public class AdminDashboardController extends HttpServlet {
     private final UserDAO userDAO = new UserDAO();
     private final RoleDAO roleDAO = new RoleDAO();
 
-    @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+    protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
         request.setCharacterEncoding("UTF-8");
@@ -68,187 +67,176 @@ public class AdminDashboardController extends HttpServlet {
             return;
         }
 
-        // Lấy thông báo flash từ session (nếu có sau khi POST)
-        String successMsg = (String) session.getAttribute("adminSuccessMsg");
-        String errorMsg = (String) session.getAttribute("adminErrorMsg");
-        if (successMsg != null) {
-            request.setAttribute("successMsg", successMsg);
-            session.removeAttribute("adminSuccessMsg");
+        String service = request.getParameter("service");
+        if (service == null || service.trim().isEmpty()) {
+            service = request.getParameter("action");
         }
-        if (errorMsg != null) {
-            request.setAttribute("errorMsg", errorMsg);
-            session.removeAttribute("adminErrorMsg");
+        if (service == null || service.trim().isEmpty()) {
+            service = "dashboard";
         }
+        service = service.trim();
 
-        String activeTab = request.getParameter("tab");
-        if (activeTab == null || activeTab.trim().isEmpty()) {
-            activeTab = "books";
-        }
+        if ("dashboard".equals(service)) {
+            // Lấy thông báo flash từ session (nếu có sau khi POST)
+            String successMsg = (String) session.getAttribute("adminSuccessMsg");
+            String errorMsg = (String) session.getAttribute("adminErrorMsg");
+            if (successMsg != null) {
+                request.setAttribute("successMsg", successMsg);
+                session.removeAttribute("adminSuccessMsg");
+            }
+            if (errorMsg != null) {
+                request.setAttribute("errorMsg", errorMsg);
+                session.removeAttribute("adminErrorMsg");
+            }
 
-        // Tham số lọc sách
-        String keyword = request.getParameter("keyword");
-        if (keyword != null) {
-            keyword = keyword.trim();
-        }
-        Integer categoryId = parseIntOrNull(request.getParameter("categoryId"));
-        String statusFilter = request.getParameter("status");
-        if (statusFilter != null) {
-            statusFilter = statusFilter.trim();
-        }
-        String sort = request.getParameter("sort");
-        if (sort == null || sort.trim().isEmpty()) {
-            sort = "newest";
-        }
+            String activeTab = request.getParameter("tab");
+            if (activeTab == null || activeTab.trim().isEmpty()) {
+                activeTab = "books";
+            }
 
-        // Truy vấn dữ liệu từ Database
-        Vector<Book> allBooks = bookDAO.getBooksWithDetails(null, null, "newest", 1, 1000);
-        Vector<Book> filteredBooks = bookDAO.getBooksWithDetails(keyword, categoryId, sort, 1, 1000);
+            // Tham số lọc sách
+            String keyword = request.getParameter("keyword");
+            if (keyword != null) {
+                keyword = keyword.trim();
+            }
+            Integer categoryId = parseIntOrNull(request.getParameter("categoryId"));
+            String statusFilter = request.getParameter("status");
+            if (statusFilter != null) {
+                statusFilter = statusFilter.trim();
+            }
+            String sort = request.getParameter("sort");
+            if (sort == null || sort.trim().isEmpty()) {
+                sort = "newest";
+            }
 
-        if (statusFilter != null && !statusFilter.isEmpty()) {
-            Vector<Book> statusFiltered = new Vector<>();
-            for (Book b : filteredBooks) {
-                if (b.getBookStatus() != null && b.getBookStatus().equalsIgnoreCase(statusFilter)) {
-                    statusFiltered.add(b);
+            // Truy vấn dữ liệu từ Database
+            Vector<Book> allBooks = bookDAO.getBooksWithDetails(null, null, "newest", 1, 1000);
+            Vector<Book> filteredBooks = bookDAO.getBooksWithDetails(keyword, categoryId, sort, 1, 1000);
+
+            if (statusFilter != null && !statusFilter.isEmpty()) {
+                Vector<Book> statusFiltered = new Vector<>();
+                for (Book b : filteredBooks) {
+                    if (b.getBookStatus() != null && b.getBookStatus().equalsIgnoreCase(statusFilter)) {
+                        statusFiltered.add(b);
+                    }
+                }
+                filteredBooks = statusFiltered;
+            }
+
+            Vector<Category> categories = categoryDAO.getAllCategory();
+            Vector<Order> orders = orderDAO.getAllOrder();
+            Vector<User> users = userDAO.getAllUser();
+            Vector<Role> roles = roleDAO.getAllRole();
+
+            // Tính toán thống kê KPI
+            int totalBooksCount = allBooks.size();
+            int totalStockCount = 0;
+            int booksForSaleCount = 0;
+            int booksForRentCount = 0;
+            for (Book b : allBooks) {
+                totalStockCount += b.getStockQuantity();
+                String st = b.getBookStatus() != null ? b.getBookStatus().trim() : "";
+                if ("Bán".equalsIgnoreCase(st)) {
+                    booksForSaleCount++;
+                } else {
+                    booksForRentCount++;
                 }
             }
-            filteredBooks = statusFiltered;
-        }
 
-        Vector<Category> categories = categoryDAO.getAllCategory();
-        Vector<Order> orders = orderDAO.getAllOrder();
-        Vector<User> users = userDAO.getAllUser();
-        Vector<Role> roles = roleDAO.getAllRole();
-
-        // Tính toán thống kê KPI
-        int totalBooksCount = allBooks.size();
-        int totalStockCount = 0;
-        int booksForSaleCount = 0;
-        int booksForRentCount = 0;
-        for (Book b : allBooks) {
-            totalStockCount += b.getStockQuantity();
-            String st = b.getBookStatus() != null ? b.getBookStatus().trim() : "";
-            if ("Bán".equalsIgnoreCase(st)) {
-                booksForSaleCount++;
-            } else {
-                booksForRentCount++;
+            double totalRevenue = 0;
+            int pendingOrdersCount = 0;
+            for (Order o : orders) {
+                if (!"Cancelled".equalsIgnoreCase(o.getOrderStatus())) {
+                    totalRevenue += o.getTotalAmount();
+                }
+                if ("Pending".equalsIgnoreCase(o.getOrderStatus())) {
+                    pendingOrdersCount++;
+                }
             }
-        }
 
-        double totalRevenue = 0;
-        int pendingOrdersCount = 0;
-        for (Order o : orders) {
-            if (!"Cancelled".equalsIgnoreCase(o.getOrderStatus())) {
-                totalRevenue += o.getTotalAmount();
-            }
-            if ("Pending".equalsIgnoreCase(o.getOrderStatus())) {
-                pendingOrdersCount++;
-            }
-        }
+            String formattedRevenue = String.format("%,.0f đ", totalRevenue).replace(',', '.');
 
-        String formattedRevenue = String.format("%,.0f đ", totalRevenue).replace(',', '.');
+            // Đặt thuộc tính sang JSP
+            request.setAttribute("activeTab", activeTab);
+            request.setAttribute("books", filteredBooks);
+            request.setAttribute("allBooksList", allBooks);
+            request.setAttribute("allBooksCount", totalBooksCount);
+            request.setAttribute("totalStockCount", totalStockCount);
+            request.setAttribute("booksForSaleCount", booksForSaleCount);
+            request.setAttribute("booksForRentCount", booksForRentCount);
+            request.setAttribute("categories", categories);
+            request.setAttribute("orders", orders);
+            request.setAttribute("pendingOrdersCount", pendingOrdersCount);
+            request.setAttribute("formattedRevenue", formattedRevenue);
+            request.setAttribute("users", users);
+            request.setAttribute("roles", roles);
 
-        // Đặt thuộc tính sang JSP
-        request.setAttribute("activeTab", activeTab);
-        request.setAttribute("books", filteredBooks);
-        request.setAttribute("allBooksList", allBooks);
-        request.setAttribute("allBooksCount", totalBooksCount);
-        request.setAttribute("totalStockCount", totalStockCount);
-        request.setAttribute("booksForSaleCount", booksForSaleCount);
-        request.setAttribute("booksForRentCount", booksForRentCount);
-        request.setAttribute("categories", categories);
-        request.setAttribute("orders", orders);
-        request.setAttribute("pendingOrdersCount", pendingOrdersCount);
-        request.setAttribute("formattedRevenue", formattedRevenue);
-        request.setAttribute("users", users);
-        request.setAttribute("roles", roles);
+            request.setAttribute("keyword", keyword);
+            request.setAttribute("selectedCategoryId", categoryId);
+            request.setAttribute("selectedStatus", statusFilter);
+            request.setAttribute("selectedSort", sort);
 
-        request.setAttribute("keyword", keyword);
-        request.setAttribute("selectedCategoryId", categoryId);
-        request.setAttribute("selectedStatus", statusFilter);
-        request.setAttribute("selectedSort", sort);
-
-        request.getRequestDispatcher("/jsp/admindashboard.jsp").forward(request, response);
-    }
-
-    @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-
-        request.setCharacterEncoding("UTF-8");
-        response.setCharacterEncoding("UTF-8");
-
-        HttpSession session = request.getSession(true);
-        User currentUser = (User) session.getAttribute("user");
-        if (currentUser != null && currentUser.getRoleId() != 2) {
-            response.sendRedirect(request.getContextPath() + "/homepage");
+            request.getRequestDispatcher("/jsp/admindashboard.jsp").forward(request, response);
             return;
-        }
-
-        String action = request.getParameter("action");
-        if (action == null) {
-            action = "";
         }
 
         String redirectTab = "books";
 
         try {
-            switch (action) {
-                case "addBook":
-                    handleAddBook(request, session);
-                    redirectTab = "books";
-                    break;
-                case "updateBook":
-                    handleUpdateBook(request, session);
-                    redirectTab = "books";
-                    break;
-                case "deleteBook":
-                    handleDeleteBook(request, session);
-                    redirectTab = "books";
-                    break;
-                case "addCategory":
-                    handleAddCategory(request, session);
-                    redirectTab = "categories";
-                    break;
-                case "updateCategory":
-                    handleUpdateCategory(request, session);
-                    redirectTab = "categories";
-                    break;
-                case "deleteCategory":
-                    handleDeleteCategory(request, session);
-                    redirectTab = "categories";
-                    break;
-                case "addOrder":
-                    handleAddOrder(request, session);
-                    redirectTab = "orders";
-                    break;
-                case "updateOrder":
-                    handleUpdateOrder(request, session);
-                    redirectTab = "orders";
-                    break;
-                case "deleteOrder":
-                    handleDeleteOrder(request, session);
-                    redirectTab = "orders";
-                    break;
-                case "addUser":
-                    handleAddUser(request, session);
-                    redirectTab = "users";
-                    break;
-                case "updateUser":
-                    handleUpdateUser(request, session);
-                    redirectTab = "users";
-                    break;
-                case "deleteUser":
-                    handleDeleteUser(request, session);
-                    redirectTab = "users";
-                    break;
-                default:
-                    break;
+            if ("addBook".equals(service)) {
+                handleAddBook(request, session);
+                redirectTab = "books";
+            } else if ("updateBook".equals(service)) {
+                handleUpdateBook(request, session);
+                redirectTab = "books";
+            } else if ("deleteBook".equals(service)) {
+                handleDeleteBook(request, session);
+                redirectTab = "books";
+            } else if ("addCategory".equals(service)) {
+                handleAddCategory(request, session);
+                redirectTab = "categories";
+            } else if ("updateCategory".equals(service)) {
+                handleUpdateCategory(request, session);
+                redirectTab = "categories";
+            } else if ("deleteCategory".equals(service)) {
+                handleDeleteCategory(request, session);
+                redirectTab = "categories";
+            } else if ("addOrder".equals(service)) {
+                handleAddOrder(request, session);
+                redirectTab = "orders";
+            } else if ("updateOrder".equals(service)) {
+                handleUpdateOrder(request, session);
+                redirectTab = "orders";
+            } else if ("deleteOrder".equals(service)) {
+                handleDeleteOrder(request, session);
+                redirectTab = "orders";
+            } else if ("addUser".equals(service)) {
+                handleAddUser(request, session);
+                redirectTab = "users";
+            } else if ("updateUser".equals(service)) {
+                handleUpdateUser(request, session);
+                redirectTab = "users";
+            } else if ("deleteUser".equals(service)) {
+                handleDeleteUser(request, session);
+                redirectTab = "users";
             }
         } catch (Exception ex) {
             session.setAttribute("adminErrorMsg", "Đã xảy ra lỗi xử lý: " + ex.getMessage());
         }
 
         response.sendRedirect(request.getContextPath() + "/admindashboard?tab=" + redirectTab);
+    }
+
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        processRequest(request, response);
+    }
+
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        processRequest(request, response);
     }
 
     // ==================== BOOK HANDLERS ====================

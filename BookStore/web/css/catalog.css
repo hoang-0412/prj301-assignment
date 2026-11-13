@@ -88,6 +88,11 @@
     padding-bottom: 64px;
 }
 
+.cat-sidebar {
+    position: sticky;
+    top: 92px;
+}
+
 .cat-filter-card {
     background: #ffffff;
     border-radius: 18px;
@@ -201,10 +206,28 @@
     cursor: pointer;
 }
 
-.cat-preset-btn:hover {
+.cat-preset-btn:hover,
+.cat-preset-btn.active {
     border-color: #4f46e5;
     color: #4f46e5;
     background: #eef2ff;
+}
+
+.cat-toolbar-reset {
+    font-size: 13px;
+    font-weight: 700;
+    color: #ef4444;
+    background: #fef2f2;
+    border: 1px solid #fecaca;
+    padding: 5px 12px;
+    border-radius: 999px;
+    text-decoration: none;
+    transition: all 0.2s;
+}
+
+.cat-toolbar-reset:hover {
+    background: #ef4444;
+    color: #ffffff;
 }
 
 .cat-checkbox-item {
@@ -306,6 +329,9 @@
 @media (max-width: 1024px) {
     .cat-main-layout {
         grid-template-columns: 1fr;
+    }
+    .cat-sidebar {
+        position: static;
     }
     .cat-books-grid {
         grid-template-columns: repeat(2, 1fr);

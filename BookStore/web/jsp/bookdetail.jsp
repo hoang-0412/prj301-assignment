@@ -221,7 +221,7 @@
                                     <div class="card-badges">
                                         <span class="badge-cat">${fn:escapeXml(rb.categoryName)}</span>
                                     </div>
-                                    <a href="${pageContext.request.contextPath}/book-detail?id=${rb.bookId}">
+                                    <a href="${pageContext.request.contextPath}/book-detail?id=${rb.bookId}" class="card-image-link" aria-label="${fn:escapeXml(rb.title)}">
                                         <img src="${pageContext.request.contextPath}/book-image?bookId=${rb.bookId}" alt="${fn:escapeXml(rb.title)}" loading="lazy">
                                     </a>
                                 </div>
@@ -237,7 +237,8 @@
                                             <span class="current-price">${rb.formattedPrice}</span>
                                         </div>
                                         <a href="${pageContext.request.contextPath}/book-detail?id=${rb.bookId}" class="btn-add-cart-mini" title="Xem chi tiết">
-                                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M5 12h14"/><path d="M12 5l7 7-7 7"/></svg>
+                                            <span>Chi tiết</span>
+                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M5 12h14"/><path d="M12 5l7 7-7 7"/></svg>
                                         </a>
                                     </div>
                                 </div>

@@ -155,6 +155,9 @@
                             • Từ khóa: <span class="cat-active-tag">"${fn:escapeXml(keyword)}"</span>
                         </c:if>
                     </div>
+                    <c:if test="${not empty selectedStatus or not empty keyword or not empty selectedCategoryId or not empty minPrice or not empty maxPrice or inStockOnly}">
+                        <a href="${pageContext.request.contextPath}/catalog" class="cat-toolbar-reset">✕ Xóa bộ lọc</a>
+                    </c:if>
                 </div>
 
                 <c:choose>
@@ -167,11 +170,13 @@
                                     <div class="card-image-wrap">
                                         <div class="card-badges">
                                             <span class="badge-cat">${fn:escapeXml(b.categoryName)}</span>
-                                            <span class="cat-book-status ${b.bookStatus == 'Bán' ? 'sale' : (b.bookStatus == 'Cho thuê' ? 'rent' : 'rented')}">
-                                                ${fn:escapeXml(b.bookStatus)}
-                                            </span>
+                                            <c:if test="${not empty b.bookStatus}">
+                                                <span class="badge-status ${b.bookStatus == 'Bán' ? 'sale' : (b.bookStatus == 'Cho thuê' ? 'rent' : 'rented')}">
+                                                    ${fn:escapeXml(b.bookStatus)}
+                                                </span>
+                                            </c:if>
                                         </div>
-                                        <a href="${pageContext.request.contextPath}/book-detail?id=${b.bookId}">
+                                        <a href="${pageContext.request.contextPath}/book-detail?id=${b.bookId}" class="card-image-link" aria-label="${fn:escapeXml(b.title)}">
                                             <img src="${pageContext.request.contextPath}/book-image?bookId=${b.bookId}"
                                                  alt="${fn:escapeXml(b.title)}" loading="lazy">
                                         </a>
@@ -183,9 +188,12 @@
                                             </a>
                                         </h3>
                                         <p class="card-author">Tác giả: <strong>${fn:escapeXml(b.author)}</strong></p>
-                                        <div class="card-rating">
-                                            <span>Kho: <strong>${b.stockQuantity} cuốn</strong></span>
-                                            <span class="review-count">• NXB ${fn:escapeXml(b.publisher)}</span>
+                                        <div class="card-meta-row">
+                                            <span class="meta-stock ${b.stockQuantity > 0 ? 'in-stock' : 'out-stock'}">
+                                                ${b.stockQuantity > 0 ? ('Kho: ' += b.stockQuantity += ' cuốn') : 'Tạm hết hàng'}
+                                            </span>
+                                            <span class="meta-dot">•</span>
+                                            <span class="meta-pub">NXB ${fn:escapeXml(b.publisher)}</span>
                                         </div>
                                         <div class="card-footer-price">
                                             <div class="price-box">
@@ -195,8 +203,9 @@
                                                 <button type="button" class="btn-add-cart-mini js-cat-add-cart"
                                                         data-id="${b.bookId}"
                                                         data-title="${fn:escapeXml(b.title)}"
-                                                        title="Thêm vào giỏ">
-                                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+                                                        title="Thêm vào giỏ hàng">
+                                                    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+                                                    <span>Thêm</span>
                                                 </button>
                                             </div>
                                         </div>

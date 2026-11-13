@@ -146,9 +146,16 @@
                                  data-image="${pageContext.request.contextPath}/book-image?bookId=${b.bookId}">
                             <div class="card-image-wrap">
                                 <div class="card-badges">
-                                    <span class="badge-cat">${b.categoryName}</span>
+                                    <span class="badge-cat">${fn:escapeXml(b.categoryName)}</span>
+                                    <c:if test="${not empty b.bookStatus}">
+                                        <span class="badge-status ${b.bookStatus == 'Bán' ? 'sale' : (b.bookStatus == 'Cho thuê' ? 'rent' : 'rented')}">
+                                            ${fn:escapeXml(b.bookStatus)}
+                                        </span>
+                                    </c:if>
                                 </div>
-                                <img src="${pageContext.request.contextPath}/book-image?bookId=${b.bookId}" alt="${fn:escapeXml(b.title)}" loading="lazy">
+                                <a href="${pageContext.request.contextPath}/book-detail?id=${b.bookId}" class="card-image-link" aria-label="${fn:escapeXml(b.title)}">
+                                    <img src="${pageContext.request.contextPath}/book-image?bookId=${b.bookId}" alt="${fn:escapeXml(b.title)}" loading="lazy">
+                                </a>
                                 <div class="card-quick-actions">
                                     <button type="button" class="action-btn-quick btn-quick-view" aria-label="Xem nhanh">
                                         <span>Xem Nhanh</span>
@@ -160,21 +167,25 @@
                             </div>
                             <div class="card-body">
                                 <h3 class="card-title" title="${fn:escapeXml(b.title)}">
-                                    <a href="${pageContext.request.contextPath}/book-detail?id=${b.bookId}">${b.title}</a>
+                                    <a href="${pageContext.request.contextPath}/book-detail?id=${b.bookId}">${fn:escapeXml(b.title)}</a>
                                 </h3>
                                 <p class="card-author">
-                                    Tác giả: <strong>${b.author}</strong>
+                                    Tác giả: <strong>${fn:escapeXml(b.author)}</strong>
                                 </p>
-                                <div class="card-rating">
-                                    <span>Đánh giá: 5.0</span>
-                                    <span class="review-count">(${b.stockQuantity + 45} lượt mua)</span>
+                                <div class="card-meta-row">
+                                    <span class="meta-stock ${b.stockQuantity > 0 ? 'in-stock' : 'out-stock'}">
+                                        ${b.stockQuantity > 0 ? ('Kho: ' += b.stockQuantity += ' cuốn') : 'Tạm hết hàng'}
+                                    </span>
+                                    <span class="meta-dot">•</span>
+                                    <span class="meta-pub">${fn:escapeXml(b.publisher)}</span>
                                 </div>
                                 <div class="card-footer-price">
                                     <div class="price-box">
                                         <span class="current-price">${b.formattedPrice}</span>
                                     </div>
-                                    <button type="button" class="btn-add-cart-mini" title="Thêm vào giỏ" aria-label="Thêm vào giỏ">
-                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path><line x1="3" y1="6" x2="21" y2="6"></line><path d="M16 10a4 4 0 0 1-8 0"></path></svg>
+                                    <button type="button" class="btn-add-cart-mini" title="Thêm vào giỏ hàng" aria-label="Thêm vào giỏ hàng">
+                                        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path><line x1="3" y1="6" x2="21" y2="6"></line><path d="M16 10a4 4 0 0 1-8 0"></path></svg>
+                                        <span>Thêm</span>
                                     </button>
                                 </div>
                             </div>
@@ -250,12 +261,19 @@
                                      data-image="${pageContext.request.contextPath}/book-image?bookId=${b.bookId}">
                                 <div class="card-image-wrap">
                                     <div class="card-badges">
-                                        <span class="badge-cat">${b.categoryName}</span>
+                                        <span class="badge-cat">${fn:escapeXml(b.categoryName)}</span>
+                                        <c:if test="${not empty b.bookStatus}">
+                                            <span class="badge-status ${b.bookStatus == 'Bán' ? 'sale' : (b.bookStatus == 'Cho thuê' ? 'rent' : 'rented')}">
+                                                ${fn:escapeXml(b.bookStatus)}
+                                            </span>
+                                        </c:if>
                                         <c:if test="${b.stockQuantity <= 0}">
                                             <span class="badge-stock-out">Hết hàng</span>
                                         </c:if>
                                     </div>
-                                    <img src="${pageContext.request.contextPath}/book-image?bookId=${b.bookId}" alt="${fn:escapeXml(b.title)}" loading="lazy">
+                                    <a href="${pageContext.request.contextPath}/book-detail?id=${b.bookId}" class="card-image-link" aria-label="${fn:escapeXml(b.title)}">
+                                        <img src="${pageContext.request.contextPath}/book-image?bookId=${b.bookId}" alt="${fn:escapeXml(b.title)}" loading="lazy">
+                                    </a>
                                     <div class="card-quick-actions">
                                         <button type="button" class="action-btn-quick btn-quick-view" aria-label="Xem nhanh">
                                             <span>Xem Nhanh</span>
@@ -267,21 +285,25 @@
                                 </div>
                                 <div class="card-body">
                                     <h3 class="card-title" title="${fn:escapeXml(b.title)}">
-                                        <a href="${pageContext.request.contextPath}/book-detail?id=${b.bookId}">${b.title}</a>
+                                        <a href="${pageContext.request.contextPath}/book-detail?id=${b.bookId}">${fn:escapeXml(b.title)}</a>
                                     </h3>
                                     <p class="card-author">
-                                        Tác giả: <strong>${b.author}</strong>
+                                        Tác giả: <strong>${fn:escapeXml(b.author)}</strong>
                                     </p>
-                                    <div class="card-rating">
-                                        <span>Đánh giá: 4.9</span>
-                                        <span class="review-count">(${b.stockQuantity + 20} lượt mua)</span>
+                                    <div class="card-meta-row">
+                                        <span class="meta-stock ${b.stockQuantity > 0 ? 'in-stock' : 'out-stock'}">
+                                            ${b.stockQuantity > 0 ? ('Kho: ' += b.stockQuantity += ' cuốn') : 'Tạm hết hàng'}
+                                        </span>
+                                        <span class="meta-dot">•</span>
+                                        <span class="meta-pub">${fn:escapeXml(b.publisher)}</span>
                                     </div>
                                     <div class="card-footer-price">
                                         <div class="price-box">
                                             <span class="current-price">${b.formattedPrice}</span>
                                         </div>
-                                        <button type="button" class="btn-add-cart-mini" title="Thêm vào giỏ" aria-label="Thêm vào giỏ">
-                                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path><line x1="3" y1="6" x2="21" y2="6"></line><path d="M16 10a4 4 0 0 1-8 0"></path></svg>
+                                        <button type="button" class="btn-add-cart-mini" title="Thêm vào giỏ hàng" aria-label="Thêm vào giỏ hàng">
+                                            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path><line x1="3" y1="6" x2="21" y2="6"></line><path d="M16 10a4 4 0 0 1-8 0"></path></svg>
+                                            <span>Thêm</span>
                                         </button>
                                     </div>
                                 </div>
